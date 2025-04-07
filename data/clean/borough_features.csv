@@ -1,0 +1,33 @@
+borough,avg_rent,total_crimes
+barking and dagenham,900.5,24903
+barnet,1264.0,31986
+bexley,850.0,18776
+brent,1314.0,34400
+bromley,1025.0,26028
+camden,1733.0,39184
+croydon,925.0,39599
+ealing,1275.0,35149
+enfield,1100.0,34357
+greenwich,1162.5,31958
+hackney,1451.5,35228
+hammersmith and fulham,1549.0,24121
+haringey,1264.0,33084
+harrow,1175.0,18434
+havering,871.0,23099
+hillingdon,1025.0,28390
+hounslow,1236.5,29029
+islington,1603.5,31169
+kensington and chelsea,2275.0,22835
+kingston upon thames,1225.0,14106
+lambeth,1397.5,37874
+lewisham,1000.0,32256
+merton,1310.5,15983
+newham,1072.5,40958
+redbridge,928.5,27750
+richmond upon thames,1475.0,13247
+southwark,1408.0,39558
+sutton,937.5,15733
+tower hamlets,1508.5,39536
+waltham forest,1000.0,25992
+wandsworth,1507.5,27579
+westminster,2047.5,88326
