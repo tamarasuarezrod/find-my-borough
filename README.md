@@ -4,7 +4,16 @@
 
 ## What it does
 
-<!-- TODO -->
+FindMyBorough recommends boroughs in London using a personalized scoring model trained on synthetic user preferences and real borough-level data. Users can input how much they value factors like:
+
+- Affordability
+- Safety
+- Youthful population
+- Proximity to central London
+
+The system returns a ranked list of boroughs that best match those preferences.
+
+It also provides an elegant frontend to explore boroughs, see crowd-sourced opinions, and interact with borough profiles visually — inspired by platforms like NomadList.
 
 ## Tech Stack
 
@@ -14,11 +23,26 @@
 
 ## Project Structure
 
-<!-- TODO -->
-
-## Setup
-
-<!-- TODO -->
+```
+find-my-borough/
+│
+├── backend/                # Django project (APIs for boroughs, users, recommendations)
+├── ml_model/               # Machine learning logic and pipelines
+│   ├── data_cleaning/      # Data loading & cleaning scripts for each source
+│   ├── training/           # Synthetic data generation and model training
+│   ├── models/             # Trained PyTorch models
+│   ├── recommend/          # Recommendation logic using the model
+│   ├── utils.py            # Shared utilities
+│   └── run_cleaning_pipeline.py
+│
+├── data/
+│   ├── raw/                # Raw downloaded datasets
+│   ├── clean/              # Cleaned, preprocessed datasets
+│   └── README.md           # Data source documentation
+│
+├── requirements.txt
+└── README.md
+```
 
 ## Data Sources
 
