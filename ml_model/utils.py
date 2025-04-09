@@ -8,7 +8,19 @@ valid_boroughs = [
 ]
 
 def standardize_borough_names(series):
-    return series.str.strip().str.lower()
+    replacements = {
+        'westminster city': 'westminster'
+    }
+
+    return (
+        series
+        .astype(str)
+        .str.strip()
+        .str.lower()
+        .str.replace('&', 'and')
+        .replace(replacements)
+    )
+
 
 def filter_valid_boroughs(df, column, valid):
     return df[df[column].isin(valid)].copy()

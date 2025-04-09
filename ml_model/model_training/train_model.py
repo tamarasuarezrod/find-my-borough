@@ -13,7 +13,7 @@ features = df_train[[
     "budget_weight", "safety_weight", "youth_weight", "centrality_weight",
     "norm_rent", "norm_safety", "norm_youth", "norm_centrality"
 ]].values.astype(np.float32)
-targets = df_train["score"].values.astype(np.float32).reshape(-1, 1)
+targets = df_train["raw_score"].values.astype(np.float32).reshape(-1, 1)
 
 # Dataset definition
 class ScoreDataset(Dataset):
@@ -36,7 +36,8 @@ class ScoreModel(nn.Module):
             nn.ReLU(),
             nn.Linear(16, 8),
             nn.ReLU(),
-            nn.Linear(8, 1)
+            nn.Linear(8, 1),
+            nn.Sigmoid()
         )
 
     def forward(self, x):
