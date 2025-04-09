@@ -11,7 +11,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en">
       <body className="bg-black text-white font-sans">
         <header className="flex justify-between items-center px-8 py-6">
-          <h1 className="text-xl font-bold">FindMyBorough</h1>
+        <Link href="/" className="text-xl font-bold cursor-pointer">
+          FindMyBorough
+        </Link> 
           <nav className="space-x-6">
             <Link href="/match" className="hover:underline">Your match</Link>
             <Link href="/explore" className="hover:underline">Explore</Link>

@@ -1,5 +1,6 @@
 'use client';
 
+import { toTitleCase } from '@/lib/utls';
 import Image from 'next/image';
 import Link from 'next/link';
 
@@ -27,7 +28,7 @@ export default function BoroughCard({ slug, name, image, price, safety, age }: P
         />
       </div>
       <div className="p-4 text-left">
-        <h3 className="text-xl font-semibold text-white mb-1">{name}</h3>
+        <h3 className="text-xl font-semibold text-white mb-1">{toTitleCase(name)}</h3>
         {(price || safety || age) && (
           <div className="text-sm text-gray-400 flex gap-4">
             {price && <span>{price}</span>}
