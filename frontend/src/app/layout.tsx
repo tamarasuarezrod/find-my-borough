@@ -1,5 +1,4 @@
 import { Sora } from 'next/font/google'
-import { Toaster } from 'react-hot-toast'
 
 const sora = Sora({
   subsets: ['latin'],
@@ -11,6 +10,7 @@ import '../styles/globals.css'
 import Link from 'next/link'
 import Providers from './providers'
 import { BoroughsProvider } from '@/context/boroughs-context'
+import ToastProvider from '@/components/toast-provider'
 
 export const metadata = {
   title: 'FindMyBorough',
@@ -45,7 +45,7 @@ export default function RootLayout({
           <BoroughsProvider>
             <main>
               {children}
-              <Toaster position="top-right" />
+              <ToastProvider />
             </main>
           </BoroughsProvider>
         </Providers>

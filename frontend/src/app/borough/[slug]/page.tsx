@@ -9,6 +9,19 @@ import {
   toTitleCase,
 } from '@/lib/utils'
 import { useBoroughBySlug } from '@/services/get-borough-detail'
+import CommunityRatings from './community-ratings'
+import {
+  ShieldCheck,
+  Leaf,
+  GlassWater,
+  Sparkles,
+  Wifi,
+  Users,
+  Baby,
+  Train,
+  Footprints,
+  SmilePlus,
+} from 'lucide-react'
 
 export default function BoroughDetailPage() {
   const { slug } = useParams()
@@ -25,6 +38,27 @@ export default function BoroughDetailPage() {
   if (isError || !borough) {
     return (
       <div className="text-center text-red-400">Failed to load the borough</div>
+    )
+  }
+
+  const getColor = (i: number, score: number) => {
+    if (i >= score) return 'bg-zinc-700'
+    if (score >= 4) return 'bg-green-400'
+    if (score >= 2) return 'bg-yellow-400'
+    return 'bg-red-400'
+  }
+  const CircleRating = ({ score }: { score: number }) => {
+    return (
+      <div className="flex gap-1">
+        {[...Array(5)].map((_, i) => (
+          <div
+            key={i}
+            className={`h-3 w-3 rounded-full ${
+              i < score ? 'bg-green-400' : 'bg-zinc-700'
+            }`}
+          />
+        ))}
+      </div>
     )
   }
 
@@ -45,7 +79,7 @@ export default function BoroughDetailPage() {
           </div>
         </div>
 
-        {/* Cards */}
+        {/* Indicators */}
         <div className="relative z-50 -mt-10 flex justify-center gap-6">
           {rent && (
             <div className="rounded-xl border border-gray-800 bg-[#111111] px-6 py-4 text-center text-white shadow-md">
@@ -76,6 +110,61 @@ export default function BoroughDetailPage() {
             </div>
           )}
         </div>
+
+        <CommunityRatings
+          ratings={[
+            {
+              label: 'Diversity & inclusion',
+              icon: <SmilePlus className="h-4 w-4" />,
+              score: 4,
+            },
+            {
+              label: 'Cleanliness',
+              icon: <Sparkles className="h-4 w-4" />,
+              score: 4,
+            },
+            {
+              label: 'Safety',
+              icon: <ShieldCheck className="h-4 w-4" />,
+              score: 4,
+            },
+            {
+              label: 'Green spaces',
+              icon: <Leaf className="h-4 w-4" />,
+              score: 3,
+            },
+            {
+              label: 'Social vibe',
+              icon: <GlassWater className="h-4 w-4" />,
+              score: 5,
+            },
+            {
+              label: 'Walkability',
+              icon: <Footprints className="h-4 w-4" />,
+              score: 5,
+            },
+            {
+              label: 'Public transport',
+              icon: <Train className="h-4 w-4" />,
+              score: 4,
+            },
+            {
+              label: 'Internet speed',
+              icon: <Wifi className="h-4 w-4" />,
+              score: 3,
+            },
+            {
+              label: 'Community openness',
+              icon: <Users className="h-4 w-4" />,
+              score: 4,
+            },
+            {
+              label: 'Family friendly',
+              icon: <Baby className="h-4 w-4" />,
+              score: 3,
+            },
+          ]}
+        />
       </div>
     </div>
   )
