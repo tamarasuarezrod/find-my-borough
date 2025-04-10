@@ -1,23 +1,20 @@
 'use client'
 
 import BoroughCard from '@/components/borough-card'
-import { useEffect, useState } from 'react'
-
-type Borough = {
-  name: string
-  slug: string
-  image: string
-}
+import { useBoroughsContext } from '@/context/boroughs-context'
 
 export default function ExplorePage() {
-  const [boroughs, setBoroughs] = useState<Borough[]>([])
+  const { boroughs, loading, error } = useBoroughsContext()
 
-  useEffect(() => {
-    fetch('http://127.0.0.1:8000/api/boroughs/')
-      .then((res) => res.json())
-      .then((data) => setBoroughs(data))
-      .catch((err) => console.error('Error fetching boroughs:', err))
-  }, [])
+  if (loading) {
+    return <div className="text-center text-gray-400">Loading boroughs...</div>
+  }
+
+  if (error || !boroughs) {
+    return (
+      <div className="text-center text-red-400">Failed to load boroughs.</div>
+    )
+  }
 
   return (
     <div className="mx-auto max-w-7xl py-10">

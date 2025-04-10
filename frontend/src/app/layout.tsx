@@ -8,6 +8,8 @@ const sora = Sora({
 
 import '../styles/globals.css'
 import Link from 'next/link'
+import Providers from './providers'
+import { BoroughsProvider } from '@/context/boroughs-context'
 
 export const metadata = {
   title: 'FindMyBorough',
@@ -38,7 +40,11 @@ export default function RootLayout({
             </Link>
           </nav>
         </header>
-        <main>{children}</main>
+        <Providers>
+          <BoroughsProvider>
+            <main>{children}</main>
+          </BoroughsProvider>
+        </Providers>
       </body>
     </html>
   )

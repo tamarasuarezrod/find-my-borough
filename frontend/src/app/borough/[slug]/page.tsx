@@ -1,7 +1,5 @@
 'use client'
 
-import type { JSX } from 'react'
-import { useEffect, useState } from 'react'
 import { useParams } from 'next/navigation'
 import Image from 'next/image'
 import {
@@ -10,48 +8,25 @@ import {
   getYouthIndicator,
   toTitleCase,
 } from '@/lib/utils'
-
-type Borough = {
-  name: string
-  slug: string
-  image: string
-  norm_rent: number
-  norm_crime: number
-  norm_youth: number
-}
-
-type Indicator = {
-  icon: JSX.Element
-  color?: string
-  label: string
-}
-
-type BoroughData = {
-  rent: Indicator | null
-  crime: Indicator | null
-  youth: Indicator | null
-}
+import { useBoroughBySlug } from '@/services/get-borough-detail'
 
 export default function BoroughDetailPage() {
   const { slug } = useParams()
-  const [borough, setBorough] = useState<Borough | null>(null)
-  const [boroughData, setBoroughData] = useState<BoroughData>()
+  const { data: borough, isLoading, isError } = useBoroughBySlug(slug as string)
 
-  useEffect(() => {
-    fetch(`http://127.0.0.1:8000/api/boroughs/${slug}/`)
-      .then((res) => res.json())
-      .then((data) => {
-        setBorough(data)
-        const rent = getRentIndicator(data.norm_rent)
-        const crime = getCrimeIndicator(data.norm_crime)
-        const youth = getYouthIndicator(data.norm_youth)
-        setBoroughData({ rent, crime, youth })
-        console.log('Borough data:', data, { rent, crime, youth })
-      })
-      .catch((err) => console.error('Error fetching borough:', err))
-  }, [slug])
+  const rent = getRentIndicator(borough?.norm_rent)
+  const crime = getCrimeIndicator(borough?.norm_crime)
+  const youth = getYouthIndicator(borough?.norm_youth)
 
-  if (!borough) return <div className="p-10 text-white">Loading...</div>
+  if (isLoading) {
+    return <div className="text-center text-gray-400">Loading borough...</div>
+  }
+
+  if (isError || !borough) {
+    return (
+      <div className="text-center text-red-400">Failed to load the borough</div>
+    )
+  }
 
   return (
     <div className="mx-auto max-w-5xl px-6 py-10">
@@ -72,35 +47,31 @@ export default function BoroughDetailPage() {
 
         {/* Cards */}
         <div className="relative z-50 -mt-10 flex justify-center gap-6">
-          {boroughData?.rent && (
+          {rent && (
             <div className="rounded-xl border border-gray-800 bg-[#111111] px-6 py-4 text-center text-white shadow-md">
               <div className="flex gap-2">
-                <span className={`flex items-center ${boroughData.rent.color}`}>
-                  {boroughData.rent.icon}
+                <span className={`flex items-center ${rent.color}`}>
+                  {rent.icon}
                 </span>
-                <span> {boroughData.rent.label}</span>
+                <span> {rent.label}</span>
               </div>
             </div>
           )}
-          {boroughData?.crime && (
+          {crime && (
             <div className="flex flex-col items-center justify-center rounded-xl border border-gray-800 bg-[#111111] px-6 py-4 text-center text-white shadow-md">
               <div className="flex gap-2">
-                <span
-                  className={`flex items-center ${boroughData.crime.color}`}
-                >
-                  {boroughData.crime.icon}
+                <span className={`flex items-center ${crime.color}`}>
+                  {crime.icon}
                 </span>
-                <span> {boroughData.crime.label}</span>
+                <span> {crime.label}</span>
               </div>
             </div>
           )}
-          {boroughData?.youth && (
+          {youth && (
             <div className="flex flex-col items-center justify-center rounded-xl border border-gray-800 bg-[#111111] px-6 py-4 text-center text-white shadow-md">
               <div className="flex gap-2">
-                <span className="flex items-center">
-                  {boroughData.youth.icon}
-                </span>
-                <span> {boroughData.youth.label}</span>
+                <span className="flex items-center">{youth.icon}</span>
+                <span> {youth.label}</span>
               </div>
             </div>
           )}

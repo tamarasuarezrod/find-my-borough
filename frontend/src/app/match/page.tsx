@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { useRecommendation } from '@/services/get-recommendation'
 
 const questions = [
   {
@@ -70,16 +71,23 @@ const questions = [
 
 export default function MatchPage() {
   const router = useRouter()
-  const [answers, setAnswers] = useState<Record<string, any>>({})
+  const [answers, setAnswers] = useState<
+    Record<string, number | boolean | string>
+  >({})
   const [error, setError] = useState<string | null>(null)
 
-  const handleSelect = (questionId: string, value: any) => {
+  const { mutateAsync: fetchRecommendation } = useRecommendation()
+
+  const handleSelect = (
+    questionId: string,
+    value: number | boolean | string,
+  ) => {
     setAnswers((prev) => ({ ...prev, [questionId]: value }))
     setError(null)
   }
 
   const handleSubmit = async () => {
-    const defaultValues: Record<string, any> = {
+    const defaultValues = {
       budget_weight: 0,
       safety_weight: 0,
       centrality_weight: 0,
@@ -94,23 +102,10 @@ export default function MatchPage() {
     }
 
     try {
-      const res = await fetch('http://127.0.0.1:8000/api/recommendations/', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-Requested-With': 'XMLHttpRequest',
-        },
-        body: JSON.stringify(payload),
-      })
-
-      if (!res.ok) {
-        throw new Error('Failed to fetch recommendations')
-      }
-
-      const data = await res.json()
+      const data = await fetchRecommendation(payload)
       sessionStorage.setItem('recommendations', JSON.stringify(data))
       router.push('/match/results', { scroll: true })
-    } catch (err: any) {
+    } catch (err) {
       setError(err.message || 'Something went wrong')
     }
   }

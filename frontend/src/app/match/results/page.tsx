@@ -10,6 +10,7 @@ import {
 } from '@/lib/utils'
 import { ThumbsDown, ThumbsUp } from 'lucide-react'
 import Link from 'next/link'
+import { useBoroughsContext } from '@/context/boroughs-context'
 
 type Recommendation = {
   borough: string
@@ -20,18 +21,9 @@ type Recommendation = {
   norm_centrality: number
 }
 
-type BoroughDetail = {
-  name: string
-  slug: string
-  image: string
-  norm_rent: number
-  norm_crime: number
-  norm_youth: number
-}
-
 export default function ResultsPage() {
   const [recommendations, setRecommendations] = useState<Recommendation[]>([])
-  const [boroughs, setBoroughs] = useState<BoroughDetail[]>([])
+  const { boroughs } = useBoroughsContext()
 
   useEffect(() => {
     const stored = sessionStorage.getItem('recommendations')
@@ -39,25 +31,14 @@ export default function ResultsPage() {
       const parsed: Recommendation[] = JSON.parse(stored)
       const sorted = [...parsed].sort((a, b) => b.score - a.score)
       setRecommendations(sorted)
-
-      Promise.all(
-        sorted.map((rec) =>
-          fetch(
-            `http://127.0.0.1:8000/api/boroughs/${rec.borough.toLowerCase().replace(/ /g, '-')}/`,
-          )
-            .then((res) => res.json())
-            .catch(() => null),
-        ),
-      ).then((results) => {
-        const valid = results.filter((r): r is BoroughDetail => !!r)
-        setBoroughs(valid)
-      })
     }
   }, [])
 
   const sendFeedback = async (borough: string, feedback: string) => {
-    //  TODO
+    // TODO: send feedback to backend
   }
+
+  if (!boroughs) return null
 
   const top = recommendations[0]
   const rest = recommendations.slice(1)

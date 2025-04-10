@@ -1,29 +1,21 @@
 'use client'
 
-import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import BoroughCard from '@/components/borough-card'
-
-type Borough = {
-  name: string
-  slug: string
-  image: string
-}
+import { useBoroughs } from '@/services/get-boroughs'
 
 export default function HomePage() {
-  const [boroughs, setBoroughs] = useState<Borough[]>([])
+  const { data: boroughs, isLoading, isError } = useBoroughs()
 
-  useEffect(() => {
-    fetch('http://127.0.0.1:8000/api/boroughs/')
-      .then((res) => res.json())
-      .then((data) => {
-        const featured = data.filter((b: Borough) =>
-          ['camden', 'westminster', 'hackney'].includes(b.slug),
-        )
-        setBoroughs(featured)
-      })
-      .catch((err) => console.error('Failed to fetch boroughs:', err))
-  }, [])
+  if (isLoading) {
+    return <div className="text-center text-gray-400">Loading boroughs...</div>
+  }
+
+  if (isError || !boroughs) {
+    return (
+      <div className="text-center text-red-400">Failed to load boroughs.</div>
+    )
+  }
 
   return (
     <div className="text-center">
@@ -57,14 +49,18 @@ export default function HomePage() {
 
       {
         <div className="grid grid-cols-1 gap-6 px-6 py-10 sm:grid-cols-3">
-          {boroughs.map((borough) => (
-            <BoroughCard
-              key={borough.slug}
-              slug={borough.slug}
-              name={borough.name}
-              image={borough.image}
-            />
-          ))}
+          {boroughs
+            .filter((b) =>
+              ['camden', 'westminster', 'hackney'].includes(b.slug),
+            )
+            .map((borough) => (
+              <BoroughCard
+                key={borough.slug}
+                slug={borough.slug}
+                name={borough.name}
+                image={borough.image}
+              />
+            ))}
         </div>
       }
     </div>
