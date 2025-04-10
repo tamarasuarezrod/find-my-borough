@@ -1,4 +1,5 @@
 import { Sora } from 'next/font/google'
+import { Toaster } from 'react-hot-toast'
 
 const sora = Sora({
   subsets: ['latin'],
@@ -42,7 +43,10 @@ export default function RootLayout({
         </header>
         <Providers>
           <BoroughsProvider>
-            <main>{children}</main>
+            <main>
+              {children}
+              <Toaster position="top-right" />
+            </main>
           </BoroughsProvider>
         </Providers>
       </body>

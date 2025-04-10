@@ -1,10 +1,10 @@
+import { api } from '@/lib/axios'
 import { Borough } from '@/types/borough'
 import { useQuery } from '@tanstack/react-query'
 
 export const getBoroughs = async (): Promise<Borough[]> => {
-  const res = await fetch('http://127.0.0.1:8000/api/boroughs/')
-  if (!res.ok) throw new Error('Failed to fetch boroughs')
-  return res.json()
+  const res = await api.get('/boroughs/')
+  return res.data
 }
 
 export const useBoroughs = () =>
