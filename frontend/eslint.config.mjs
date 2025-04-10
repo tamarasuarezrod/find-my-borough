@@ -1,42 +1,56 @@
-// eslint.config.mjs
-import js from '@eslint/js';
-import ts from '@typescript-eslint/eslint-plugin';
-import tsParser from '@typescript-eslint/parser';
-
-import { FlatCompat } from '@eslint/eslintrc';
-import { fileURLToPath } from 'url';
-import { dirname } from 'path';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
+import { FlatCompat } from '@eslint/eslintrc'
 
 const compat = new FlatCompat({
-  baseDirectory: __dirname,
-});
+  // import.meta.dirname is available after Node.js v20.11.0
+  baseDirectory: import.meta.dirname,
+})
 
-export default [
-  js.configs.recommended,
-
-  // Next.js config (compat mode)
-  ...compat.extends('next/core-web-vitals'),
-
-  // TypeScript support
-  {
-    files: ['**/*.ts', '**/*.tsx'],
-    languageOptions: {
-      parser: tsParser,
-      parserOptions: {
-        ecmaVersion: 'latest',
-        sourceType: 'module',
-        project: './tsconfig.json',
-      },
-    },
-    plugins: {
-      '@typescript-eslint': ts,
-    },
+const eslintConfig = [
+  ...compat.config({
+    extends: [
+      'next',
+      'next/core-web-vitals',
+      'next/typescript',
+      'plugin:prettier/recommended',
+      'plugin:jsx-a11y/recommended',
+    ],
+    plugins: ['prettier', 'jsx-a11y', 'unused-imports'],
     rules: {
-      '@typescript-eslint/no-explicit-any': 'warn',
-      '@typescript-eslint/consistent-type-imports': 'error',
+      'prettier/prettier': [
+        'error',
+        {
+          trailingComma: 'all',
+          semi: false,
+          tabWidth: 2,
+          singleQuote: true,
+          printWidth: 80,
+          endOfLine: 'auto',
+          arrowParens: 'always',
+          plugins: ['prettier-plugin-tailwindcss'],
+        },
+        {
+          usePrettierrc: false,
+        },
+      ],
+      'unused-imports/no-unused-imports': 'error',
+      'unused-imports/no-unused-vars': [
+        'warn',
+        {
+          vars: 'all',
+          varsIgnorePattern: '^_',
+          args: 'after-used',
+          argsIgnorePattern: '^_',
+        },
+      ],
+      'react/react-in-jsx-scope': 'off',
+      'jsx-a11y/alt-text': 'warn',
+      'jsx-a11y/aria-props': 'warn',
+      'jsx-a11y/aria-proptypes': 'warn',
+      'jsx-a11y/aria-unsupported-elements': 'warn',
+      'jsx-a11y/role-has-required-aria-props': 'warn',
+      'jsx-a11y/role-supports-aria-props': 'warn',
     },
-  },
-];
+  }),
+]
+
+export default eslintConfig

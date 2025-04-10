@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import {
   getCrimeIndicator,
@@ -7,9 +7,9 @@ import {
   getYouthIndicator,
   getYouthInfo,
   toTitleCase,
-} from "@/lib/utils";
-import Image from "next/image";
-import Link from "next/link";
+} from '@/lib/utils';
+import Image from 'next/image';
+import Link from 'next/link';
 
 type Props = {
   slug: string;
@@ -46,30 +46,24 @@ export default function BoroughCard({
       )}
       <div className="relative w-full h-48">
         <Image
-          src={image ?? "/images/london-background.png"}
+          src={image ?? '/images/london-background.png'}
           alt={name}
           fill
           className="object-cover"
         />
       </div>
       <div className="p-4 text-left">
-        <h3 className="text-xl font-semibold text-white mb-1">
-          {toTitleCase(name)}
-        </h3>
+        <h3 className="text-xl font-semibold text-white mb-1">{toTitleCase(name)}</h3>
         <div className="text-sm text-gray-400 flex gap-4 flex-wrap mt-2 items-center">
           {rent && (
             <div className="flex gap-1">
-              <span className={`flex items-center ${rent.color}`}>
-                {rent.icon}
-              </span>
+              <span className={`flex items-center ${rent.color}`}>{rent.icon}</span>
               <span> {rent.label}</span>
             </div>
           )}
           {crime && (
             <div className="flex gap-1">
-              <span className={`flex items-center ${crime.color}`}>
-                {crime.icon}
-              </span>
+              <span className={`flex items-center ${crime.color}`}>{crime.icon}</span>
               <span> {crime.label}</span>
             </div>
           )}

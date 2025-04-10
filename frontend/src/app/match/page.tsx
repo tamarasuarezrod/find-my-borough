@@ -1,7 +1,7 @@
-'use client';
+'use client'
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 
 const questions = [
   {
@@ -10,7 +10,7 @@ const questions = [
     description: 'How sensitive are you to rent prices?',
     options: [
       { label: "I'm on a tight budget – affordability is key", value: 1 },
-      { label: "I care about price, but I can stretch a bit", value: 0.5 },
+      { label: 'I care about price, but I can stretch a bit', value: 0.5 },
       { label: "I'm willing to pay more for a better area", value: 0 },
     ],
   },
@@ -21,7 +21,7 @@ const questions = [
     options: [
       { label: "I won't compromise on safety", value: 1 },
       { label: "I'd like a safe area, but I'm flexible", value: 0.5 },
-      { label: "Not a big concern for me", value: 0 },
+      { label: 'Not a big concern for me', value: 0 },
     ],
   },
   {
@@ -29,9 +29,9 @@ const questions = [
     title: '📍 Location',
     description: 'How important is it for you to live close to central London?',
     options: [
-      { label: "I want to be in the heart of the city", value: 1 },
-      { label: "It’d be nice, but I’m flexible", value: 0.5 },
-      { label: "I don’t mind being further out", value: 0 },
+      { label: 'I want to be in the heart of the city', value: 1 },
+      { label: 'It’d be nice, but I’m flexible', value: 0.5 },
+      { label: 'I don’t mind being further out', value: 0 },
     ],
   },
   {
@@ -66,17 +66,17 @@ const questions = [
       { label: 'Other', value: 'other' },
     ],
   },
-];
+]
 
 export default function MatchPage() {
-  const router = useRouter();
-  const [answers, setAnswers] = useState<Record<string, any>>({});
-  const [error, setError] = useState<string | null>(null);
+  const router = useRouter()
+  const [answers, setAnswers] = useState<Record<string, any>>({})
+  const [error, setError] = useState<string | null>(null)
 
   const handleSelect = (questionId: string, value: any) => {
-    setAnswers((prev) => ({ ...prev, [questionId]: value }));
-    setError(null);
-  };
+    setAnswers((prev) => ({ ...prev, [questionId]: value }))
+    setError(null)
+  }
 
   const handleSubmit = async () => {
     const defaultValues: Record<string, any> = {
@@ -86,12 +86,12 @@ export default function MatchPage() {
       youth_weight: 0,
       stay_duration: 'unknown',
       is_student: false,
-    };
+    }
 
     const payload = {
       ...defaultValues,
       ...answers,
-    };
+    }
 
     try {
       const res = await fetch('http://127.0.0.1:8000/api/recommendations/', {
@@ -101,40 +101,44 @@ export default function MatchPage() {
           'X-Requested-With': 'XMLHttpRequest',
         },
         body: JSON.stringify(payload),
-      });
+      })
 
       if (!res.ok) {
-        throw new Error('Failed to fetch recommendations');
+        throw new Error('Failed to fetch recommendations')
       }
 
-      const data = await res.json();
-      sessionStorage.setItem('recommendations', JSON.stringify(data));
-      router.push('/match/results', { scroll: true });
+      const data = await res.json()
+      sessionStorage.setItem('recommendations', JSON.stringify(data))
+      router.push('/match/results', { scroll: true })
     } catch (err: any) {
-      setError(err.message || 'Something went wrong');
+      setError(err.message || 'Something went wrong')
     }
-  };
+  }
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-10">
-      <h1 className="text-3xl font-semibold text-center mb-2">Find Your Match</h1>
-      <p className="text-gray-400 text-center mb-10">Answer a few questions to find your ideal London borough</p>
+    <div className="mx-auto max-w-7xl px-4 py-10">
+      <h1 className="mb-2 text-center text-3xl font-semibold">
+        Find Your Match
+      </h1>
+      <p className="mb-10 text-center text-gray-400">
+        Answer a few questions to find your ideal London borough
+      </p>
 
-      {error && <p className="text-red-400 text-center mb-6">{error}</p>}
+      {error && <p className="mb-6 text-center text-red-400">{error}</p>}
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+      <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
         {questions.map((q) => (
-          <div key={q.id} className="bg-zinc-900 p-6 rounded-xl">
-            <h2 className="text-lg font-medium mb-1">{q.title}</h2>
-            <p className="text-sm text-gray-400 mb-4">{q.description}</p>
+          <div key={q.id} className="rounded-xl bg-zinc-900 p-6">
+            <h2 className="mb-1 text-lg font-medium">{q.title}</h2>
+            <p className="mb-4 text-sm text-gray-400">{q.description}</p>
             <div className="flex flex-col gap-2">
               {q.options.map((opt) => (
                 <button
                   key={opt.label}
                   onClick={() => handleSelect(q.id, opt.value)}
-                  className={`text-left px-4 py-2 rounded-lg border ${
+                  className={`rounded-lg border px-4 py-2 text-left ${
                     answers[q.id] === opt.value
-                      ? 'bg-white text-black border-white'
+                      ? 'border-white bg-white text-black'
                       : 'border-zinc-700 hover:bg-zinc-800'
                   }`}
                 >
@@ -146,14 +150,14 @@ export default function MatchPage() {
         ))}
       </div>
 
-      <div className="flex justify-center mt-10">
+      <div className="mt-10 flex justify-center">
         <button
           onClick={handleSubmit}
-          className="bg-white text-black px-8 py-3 rounded-full font-medium shadow hover:scale-105 transition"
+          className="rounded-full bg-white px-8 py-3 font-medium text-black shadow transition hover:scale-105"
         >
           Find my match →
         </button>
       </div>
     </div>
-  );
+  )
 }
