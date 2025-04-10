@@ -1,12 +1,12 @@
 import os
-import sys
-import pandas as pd
 import torch
 import torch.nn as nn
 
 from django.conf import settings
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
+
+from borough.models import Borough  # 👈 Importamos el modelo
 
 class ScoreModel(nn.Module):
     def __init__(self):
@@ -23,9 +23,7 @@ class ScoreModel(nn.Module):
     def forward(self, x):
         return self.net(x)
 
-csv_path = os.path.join(settings.BASE_DIR, "..", "data", "clean", "borough_features.csv")
-df = pd.read_csv(csv_path)
-
+# Cargar modelo
 model_path = os.path.join(settings.BASE_DIR, "..", "models", "score_model.pth")
 model = ScoreModel()
 model.load_state_dict(torch.load(model_path))
@@ -45,24 +43,24 @@ def get_recommendations(user_preferences, top_n=5):
     ]
 
     recommendations = []
-    for _, row in df.iterrows():
-        borough = row["borough"]
+    boroughs = Borough.objects.exclude(norm_rent__isnull=True).exclude(norm_crime__isnull=True).exclude(norm_youth__isnull=True)
+
+    for b in boroughs:
         borough_features = [
-            row["norm_rent"],
-            row["norm_safety"],
-            row["norm_youth"],
-            row["norm_centrality"]
+            b.norm_rent,
+            b.norm_crime,
+            b.norm_youth,
+            b.norm_centrality,
         ]
 
         score = predict_score(weights, borough_features)
 
         recommendations.append({
-            "borough": borough,
+            "borough": b.name.lower(),
             "score": round(score, 4),
-            "norm_rent": round(row["norm_rent"], 2),
-            "norm_safety": round(row["norm_safety"], 2),
-            "norm_youth": round(row["norm_youth"], 2),
-            "norm_centrality": round(row["norm_centrality"], 2),
+            "norm_rent": round(b.norm_rent, 2),
+            "norm_crime": round(b.norm_crime, 2),
+            "norm_youth": round(b.norm_youth, 2),
         })
 
     recommendations.sort(key=lambda x: x["score"], reverse=True)

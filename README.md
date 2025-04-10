@@ -1,6 +1,6 @@
 # FindMyBorough
 
-**FindMyBorough** is an AI-powered tool that helps you find the best London borough to live in, based on your personal preferences such as budget, safety, green spaces, and transport.
+**FindMyBorough** is an AI-powered tool that helps you find the best London borough to live in, based on your personal preferences.
 
 ## What it does
 
@@ -12,8 +12,6 @@ FindMyBorough recommends boroughs in London using a personalized scoring model t
 - Proximity to central London
 
 The system returns a ranked list of boroughs that best match those preferences.
-
-It also provides an elegant frontend to explore boroughs, see crowd-sourced opinions, and interact with borough profiles visually — inspired by platforms like NomadList.
 
 ## Tech Stack
 

@@ -1,41 +1,85 @@
-'use client';
+"use client";
 
-import { toTitleCase } from '@/lib/utls';
-import Image from 'next/image';
-import Link from 'next/link';
+import {
+  getCrimeIndicator,
+  getCrimeRateInfo,
+  getRentIndicator,
+  getYouthIndicator,
+  getYouthInfo,
+  toTitleCase,
+} from "@/lib/utils";
+import Image from "next/image";
+import Link from "next/link";
 
 type Props = {
   slug: string;
   name: string;
   image: string;
-  price?: string;
-  safety?: string;
-  age?: string;
+  norm_rent?: number;
+  norm_crime?: number;
+  norm_youth?: number;
+  scoreLabel?: string;
 };
 
-export default function BoroughCard({ slug, name, image, price, safety, age }: Props) {
+export default function BoroughCard({
+  slug,
+  name,
+  image,
+  scoreLabel,
+  norm_rent,
+  norm_crime,
+  norm_youth,
+}: Props) {
+  const rent = getRentIndicator(norm_rent);
+  const crime = getCrimeIndicator(norm_crime);
+  const youthInfo = getYouthIndicator(norm_youth);
+
   return (
     <Link
       href={`/borough/${slug}`}
-      className="rounded-2xl overflow-hidden bg-zinc-900 hover:scale-105 transition shadow-lg"
+      className="relative rounded-2xl overflow-hidden bg-zinc-900 hover:scale-105 transition shadow-lg"
     >
+      {scoreLabel && (
+        <span className="absolute top-2 left-2 z-10 bg-white text-black text-xs font-semibold rounded-full px-2 py-0.5 shadow">
+          {scoreLabel}
+        </span>
+      )}
       <div className="relative w-full h-48">
         <Image
-          src={image ?? '/images/london-background.png'}
+          src={image ?? "/images/london-background.png"}
           alt={name}
           fill
           className="object-cover"
         />
       </div>
       <div className="p-4 text-left">
-        <h3 className="text-xl font-semibold text-white mb-1">{toTitleCase(name)}</h3>
-        {(price || safety || age) && (
-          <div className="text-sm text-gray-400 flex gap-4">
-            {price && <span>{price}</span>}
-            {safety && <span>{safety}</span>}
-            {age && <span>{age}</span>}
-          </div>
-        )}
+        <h3 className="text-xl font-semibold text-white mb-1">
+          {toTitleCase(name)}
+        </h3>
+        <div className="text-sm text-gray-400 flex gap-4 flex-wrap mt-2 items-center">
+          {rent && (
+            <div className="flex gap-1">
+              <span className={`flex items-center ${rent.color}`}>
+                {rent.icon}
+              </span>
+              <span> {rent.label}</span>
+            </div>
+          )}
+          {crime && (
+            <div className="flex gap-1">
+              <span className={`flex items-center ${crime.color}`}>
+                {crime.icon}
+              </span>
+              <span> {crime.label}</span>
+            </div>
+          )}
+          {youthInfo && (
+            <div className="flex gap-1">
+              <span className="flex items-center">{youthInfo.icon}</span>
+              <span> {youthInfo.label}</span>
+            </div>
+          )}
+        </div>
       </div>
     </Link>
   );

@@ -10,7 +10,7 @@ export default function AboutPage() {
         </p>
   
         <section className="mb-10">
-          <h2 className="text-2xl font-semibold mb-2">🔍 How it works</h2>
+          <h2 className="text-2xl font-semibold mb-2">How it works</h2>
           <p className="text-gray-400">
             Just answer a few questions about your budget, lifestyle, priorities and plans. Our system uses real data and a machine learning model to recommend the boroughs that best match your preferences, even if you're not familiar with the city.
           </p>

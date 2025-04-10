@@ -9,9 +9,9 @@ const questions = [
     title: '💰 Rent prices',
     description: 'How sensitive are you to rent prices?',
     options: [
-      { label: "I'm on a tight budget – affordability is key", value: 0.3 },
-      { label: "I care about price, but I can stretch a bit", value: 0.2 },
-      { label: "I'm willing to pay more for a better area", value: 0.1 },
+      { label: "I'm on a tight budget – affordability is key", value: 1 },
+      { label: "I care about price, but I can stretch a bit", value: 0.5 },
+      { label: "I'm willing to pay more for a better area", value: 0 },
     ],
   },
   {
@@ -19,9 +19,9 @@ const questions = [
     title: '🛡️ Safety',
     description: 'How much does safety influence your choice of area?',
     options: [
-      { label: "I won't compromise on safety", value: 0.4 },
-      { label: "I'd like a safe area, but I'm flexible", value: 0.3 },
-      { label: "Not a big concern for me", value: 0.1 },
+      { label: "I won't compromise on safety", value: 1 },
+      { label: "I'd like a safe area, but I'm flexible", value: 0.5 },
+      { label: "Not a big concern for me", value: 0 },
     ],
   },
   {
@@ -29,9 +29,9 @@ const questions = [
     title: '📍 Location',
     description: 'How important is it for you to live close to central London?',
     options: [
-      { label: "I want to be in the heart of the city", value: 0.3 },
-      { label: "It’d be nice, but I’m flexible", value: 0.2 },
-      { label: "I don’t mind being further out", value: 0.1 },
+      { label: "I want to be in the heart of the city", value: 1 },
+      { label: "It’d be nice, but I’m flexible", value: 0.5 },
+      { label: "I don’t mind being further out", value: 0 },
     ],
   },
   {
@@ -39,9 +39,9 @@ const questions = [
     title: '👥 Youth community',
     description: 'What kind of neighbourhood vibe are you looking for?',
     options: [
-      { label: 'Energetic and youthful', value: 0.2 },
-      { label: 'Calm and family-oriented', value: 0.1 },
-      { label: 'I don’t mind either way', value: 0.05 },
+      { label: 'Energetic and youthful', value: 1 },
+      { label: 'Calm and family-oriented', value: 0.5 },
+      { label: 'I don’t mind either way', value: 0 },
     ],
   },
   {
@@ -60,17 +60,16 @@ const questions = [
     title: '📌 Current situation',
     description: 'What best describes your current situation?',
     options: [
-      { label: "I'm a student", value: true },
-      { label: "I'm a young professional", value: false },
-      { label: 'I’m relocating with family', value: false },
-      { label: 'Other', value: false },
+      { label: "I'm a student", value: 'student' },
+      { label: "I'm a young professional", value: 'young-professional' },
+      { label: 'I’m relocating with family', value: 'family' },
+      { label: 'Other', value: 'other' },
     ],
   },
 ];
 
 export default function MatchPage() {
-    const router = useRouter();
-
+  const router = useRouter();
   const [answers, setAnswers] = useState<Record<string, any>>({});
   const [error, setError] = useState<string | null>(null);
 
@@ -80,11 +79,19 @@ export default function MatchPage() {
   };
 
   const handleSubmit = async () => {
-    const missing = questions.find((q) => !(q.id in answers));
-    if (missing) {
-      setError(`Please answer the question about "${missing.title}"`);
-      return;
-    }
+    const defaultValues: Record<string, any> = {
+      budget_weight: 0,
+      safety_weight: 0,
+      centrality_weight: 0,
+      youth_weight: 0,
+      stay_duration: 'unknown',
+      is_student: false,
+    };
+
+    const payload = {
+      ...defaultValues,
+      ...answers,
+    };
 
     try {
       const res = await fetch('http://127.0.0.1:8000/api/recommendations/', {
@@ -92,9 +99,8 @@ export default function MatchPage() {
         headers: {
           'Content-Type': 'application/json',
           'X-Requested-With': 'XMLHttpRequest',
-          // Si usás CSRF en el backend, agregá también el token aquí
         },
-        body: JSON.stringify(answers),
+        body: JSON.stringify(payload),
       });
 
       if (!res.ok) {
@@ -102,11 +108,8 @@ export default function MatchPage() {
       }
 
       const data = await res.json();
-      router.push('/match/results', {
-        scroll: true,
-      });
       sessionStorage.setItem('recommendations', JSON.stringify(data));
-
+      router.push('/match/results', { scroll: true });
     } catch (err: any) {
       setError(err.message || 'Something went wrong');
     }

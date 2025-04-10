@@ -20,16 +20,14 @@ export default function ExplorePage() {
   }, []);
 
   return (
-    <div className="max-w-6xl mx-auto px-6 py-10">
+    <div className="max-w-7xl mx-auto py-10">
       <h1 className="text-3xl font-bold mb-6 text-white text-center">Explore All Boroughs</h1>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-        {boroughs.map((b) => (
+        {boroughs.map((borough) => (
           <BoroughCard
-            key={b.slug}
-            slug={b.slug}
-            name={b.name}
-            image={b.image}
+          key={borough.slug}
+          {...borough}
           />
         ))}
       </div>

@@ -25,3 +25,6 @@ staticfiles/
 *.pkl
 *.joblib
 *.pt
+
+# Jupyter Notebook
+**/.ipynb_checkpoints/

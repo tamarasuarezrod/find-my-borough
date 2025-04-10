@@ -6,23 +6,40 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "eslint . --ext .ts,.tsx",
+    "lint:fix": "eslint . --ext .ts,.tsx --fix"
   },
   "dependencies": {
+    "lucide-react": "^0.487.0",
     "next": "15.2.5",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
+    "@eslint/js": "^9.24.0",
+    "@next/eslint-plugin-next": "^15.3.0",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@typescript-eslint/eslint-plugin": "^8.29.1",
+    "@typescript-eslint/parser": "^8.29.1",
     "autoprefixer": "^10.4.21",
-    "eslint": "^9",
+    "eslint": "^9.24.0",
     "eslint-config-next": "15.2.5",
+    "eslint-config-prettier": "^10.1.1",
+    "eslint-plugin-i18n-json": "^4.0.1",
+    "eslint-plugin-jest": "^28.11.0",
+    "eslint-plugin-prettier": "^5.2.6",
+    "eslint-plugin-simple-import-sort": "^12.1.1",
+    "eslint-plugin-sonarjs": "^3.0.2",
+    "eslint-plugin-tailwindcss": "^3.18.0",
+    "eslint-plugin-testing-library": "^7.1.1",
+    "eslint-plugin-unicorn": "^58.0.0",
+    "eslint-plugin-unused-imports": "^4.1.4",
     "postcss": "^8.5.3",
+    "prettier": "^3.5.3",
     "tailwindcss": "3.4.1",
     "typescript": "^5"
   }
