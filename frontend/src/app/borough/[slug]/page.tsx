@@ -10,18 +10,6 @@ import {
 } from '@/lib/utils'
 import { useBoroughBySlug } from '@/services/get-borough-detail'
 import CommunityRatings from './community-ratings'
-import {
-  ShieldCheck,
-  Leaf,
-  GlassWater,
-  Sparkles,
-  Wifi,
-  Users,
-  Baby,
-  Train,
-  Footprints,
-  SmilePlus,
-} from 'lucide-react'
 
 export default function BoroughDetailPage() {
   const { slug } = useParams()
@@ -110,61 +98,7 @@ export default function BoroughDetailPage() {
             </div>
           )}
         </div>
-
-        <CommunityRatings
-          ratings={[
-            {
-              label: 'Diversity & inclusion',
-              icon: <SmilePlus className="h-4 w-4" />,
-              score: 4,
-            },
-            {
-              label: 'Cleanliness',
-              icon: <Sparkles className="h-4 w-4" />,
-              score: 4,
-            },
-            {
-              label: 'Safety',
-              icon: <ShieldCheck className="h-4 w-4" />,
-              score: 4,
-            },
-            {
-              label: 'Green spaces',
-              icon: <Leaf className="h-4 w-4" />,
-              score: 3,
-            },
-            {
-              label: 'Social vibe',
-              icon: <GlassWater className="h-4 w-4" />,
-              score: 5,
-            },
-            {
-              label: 'Walkability',
-              icon: <Footprints className="h-4 w-4" />,
-              score: 5,
-            },
-            {
-              label: 'Public transport',
-              icon: <Train className="h-4 w-4" />,
-              score: 4,
-            },
-            {
-              label: 'Internet speed',
-              icon: <Wifi className="h-4 w-4" />,
-              score: 3,
-            },
-            {
-              label: 'Community openness',
-              icon: <Users className="h-4 w-4" />,
-              score: 4,
-            },
-            {
-              label: 'Family friendly',
-              icon: <Baby className="h-4 w-4" />,
-              score: 3,
-            },
-          ]}
-        />
+        <CommunityRatings boroughSlug={slug as string} />
       </div>
     </div>
   )

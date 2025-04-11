@@ -8,9 +8,9 @@ import {
   getYouthIndicator,
   toTitleCase,
 } from '@/lib/utils'
-import { ThumbsDown, ThumbsUp } from 'lucide-react'
 import Link from 'next/link'
 import { useBoroughsContext } from '@/context/boroughs-context'
+import FeedbackButtons from '@/components/feedback-buttons'
 
 type Recommendation = {
   borough: string
@@ -109,22 +109,10 @@ export default function ResultsPage() {
           </Link>
 
           <div className="mb-14 mr-2 flex flex-col items-end text-sm text-gray-500">
-            <div className="flex items-center gap-3">
-              <button
-                onClick={() => sendFeedback(topBorough.name, 'like')}
-                className="flex items-center gap-1 text-gray-400 transition hover:text-green-400"
-              >
-                <ThumbsUp className="h-4 w-4" strokeWidth={1.5} />
-                Yes
-              </button>
-              <button
-                onClick={() => sendFeedback(topBorough.name, 'dislike')}
-                className="flex items-center gap-1 text-gray-400 transition hover:text-red-400"
-              >
-                <ThumbsDown className="h-4 w-4" strokeWidth={1.5} />
-                No
-              </button>
-            </div>
+            <FeedbackButtons
+              boroughName={topBorough.name}
+              onSendFeedback={sendFeedback}
+            />
           </div>
         </>
       )}
@@ -140,16 +128,22 @@ export default function ResultsPage() {
           if (!details) return null
 
           return (
-            <BoroughCard
-              key={details.slug}
-              slug={details.slug}
-              name={details.name}
-              image={details.image}
-              scoreLabel={`Score: ${(rec.score * 100).toFixed(0)}%`}
-              norm_rent={details.norm_rent}
-              norm_crime={details.norm_crime}
-              norm_youth={details.norm_youth}
-            />
+            <div key={details.slug} className="relative">
+              <FeedbackButtons
+                boroughName={details.name}
+                onSendFeedback={sendFeedback}
+                variant="icon-only"
+              />
+              <BoroughCard
+                slug={details.slug}
+                name={details.name}
+                image={details.image}
+                scoreLabel={`Score: ${(rec.score * 100).toFixed(0)}%`}
+                norm_rent={details.norm_rent}
+                norm_crime={details.norm_crime}
+                norm_youth={details.norm_youth}
+              />
+            </div>
           )
         })}
       </div>

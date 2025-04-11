@@ -4,30 +4,27 @@ import { useState } from 'react'
 import toast from 'react-hot-toast'
 import CircleRating from '@/components/circle-rating'
 import { useSession } from 'next-auth/react'
+import {
+  useCommunityScores,
+  useSubmitCommunityRatings,
+} from '@/services/community-rating'
 
 type CommunityRatingsProps = {
-  ratings: {
-    label: string
-    icon: React.ReactNode
-    score: number
-  }[]
+  boroughSlug: string
 }
 
-export default function CommunityRatings({ ratings }: CommunityRatingsProps) {
+export default function CommunityRatings({
+  boroughSlug,
+}: CommunityRatingsProps) {
   const { status } = useSession()
+  const { data: scores, refetch } = useCommunityScores(boroughSlug)
+  const { mutateAsync: submitRatings } = useSubmitCommunityRatings()
+
   const [isVoting, setIsVoting] = useState(false)
-  const [votes, setVotes] = useState<number[]>([])
+  const [votes, setVotes] = useState<Record<string, number>>({})
 
-  const handleVote = (index: number, score: number) => {
-    const updated = [...votes]
-    updated[index] = score
-    setVotes(updated)
-  }
-
-  const submitVotes = () => {
-    toast.success('Thanks for your vote!')
-    setIsVoting(false)
-    setVotes([])
+  const handleVote = (featureId: string, score: number) => {
+    setVotes((prev) => ({ ...prev, [featureId]: score }))
   }
 
   const startVoting = () => {
@@ -35,7 +32,22 @@ export default function CommunityRatings({ ratings }: CommunityRatingsProps) {
       toast.error("Please log in to vote, we'd love to hear your opinion!")
     } else {
       setIsVoting(true)
-      setVotes(ratings.map(() => 0))
+      const defaultVotes = Object.fromEntries(
+        (features || []).map((f: any) => [id, 0]),
+      )
+      setVotes(defaultVotes)
+    }
+  }
+
+  const submit = async () => {
+    try {
+      await submitRatings({ borough: boroughSlug, ratings: votes })
+      toast.success('Thanks for your vote!')
+      setIsVoting(false)
+      setVotes({})
+      refetch()
+    } catch (err) {
+      toast.error('Failed to submit your vote')
     }
   }
 
@@ -44,27 +56,29 @@ export default function CommunityRatings({ ratings }: CommunityRatingsProps) {
       <h2 className="mb-4 text-xl font-semibold text-white">
         What people are saying
       </h2>
+
       <div className="grid grid-cols-2 gap-x-4 gap-y-6 text-sm text-white sm:grid-cols-3">
-        {ratings.map((item, i) => (
-          <div key={item.label}>
-            <p className="mb-1 flex items-center gap-2">
-              {item.icon} {item.label}
-            </p>
-            <CircleRating
-              score={isVoting ? votes[i] : item.score}
-              editable={isVoting}
-              onChange={(score) => handleVote(i, score)}
-            />
-          </div>
-        ))}
+        {(scores || []).map(({ label, feature, scire }) => {
+          const currentScore =
+            scores?.find((s: any) => s.feature === feature)?.score || 0
+          const score = isVoting ? (votes[feature] ?? 0) : currentScore
+
+          return (
+            <div key={feature}>
+              <p className="mb-1 flex items-center gap-2">{label}</p>
+              <CircleRating
+                score={score}
+                editable={isVoting}
+                onChange={(val) => handleVote(feature, val)}
+              />
+            </div>
+          )
+        })}
       </div>
 
       <div className="mt-6 flex justify-end">
         {isVoting ? (
-          <button
-            onClick={submitVotes}
-            className="text-sm text-green-400 underline"
-          >
+          <button onClick={submit} className="text-sm text-green-400 underline">
             Submit votes
           </button>
         ) : (
