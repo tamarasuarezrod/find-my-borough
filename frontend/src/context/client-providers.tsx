@@ -15,23 +15,26 @@ export default function ClientProviders({
   return (
     <SessionProvider>
       <Providers>
-        <header className="flex items-center justify-between px-8 py-5">
-          <Link href="/" className="text-l cursor-pointer">
+        <header className="flex flex-col items-center justify-between px-6 py-4 sm:flex-row">
+          <Link href="/" className="mb-4 text-xl font-bold sm:mb-0">
             FindMyBorough
           </Link>
-          <nav className="flex items-center space-x-6">
-            <Link href="/match" className="hover:underline">
-              Your match
-            </Link>
-            <Link href="/explore" className="hover:underline">
-              Explore
-            </Link>
-            <Link href="/about" className="hover:underline">
-              About
-            </Link>
+          <div className="flex items-center gap-6">
+            <nav className="flex gap-4">
+              <Link href="/match" className="hover:underline">
+                Your match
+              </Link>
+              <Link href="/explore" className="hover:underline">
+                Explore
+              </Link>
+              <Link href="/about" className="hover:underline">
+                About
+              </Link>
+            </nav>
             <UserActions />
-          </nav>
+          </div>
         </header>
+
         <main>
           <BoroughsProvider>
             {children}

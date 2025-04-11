@@ -49,44 +49,37 @@ export default function BoroughDetailPage() {
         </div>
 
         {/* Indicators */}
-        <div className="relative z-50 -mt-10 flex justify-center gap-6">
+        <div className="relative z-50 -mt-10 grid grid-cols-2 gap-4 px-4 sm:flex sm:justify-center sm:gap-6">
           {centrality && (
-            <div className="flex flex-col items-center justify-center rounded-xl border border-gray-800 bg-[#111111] px-6 py-4 text-center text-white shadow-md">
-              <div className="flex gap-2">
-                <span className="flex items-center">{centrality.icon}</span>
-                <span>{centrality.label}</span>
-              </div>
+            <div className="flex items-center justify-center gap-2 rounded-xl border border-gray-800 bg-[#111111] px-4 py-3 text-white shadow-md">
+              <span className="flex items-center">{centrality.icon}</span>
+              <span>{centrality.label}</span>
             </div>
           )}
           {rent && (
-            <div className="rounded-xl border border-gray-800 bg-[#111111] px-6 py-4 text-center text-white shadow-md">
-              <div className="flex gap-2">
-                <span className={`flex items-center ${rent.color}`}>
-                  {rent.icon}
-                </span>
-                <span> {rent.label}</span>
-              </div>
+            <div className="flex items-center justify-center gap-2 rounded-xl border border-gray-800 bg-[#111111] px-4 py-3 text-white shadow-md">
+              <span className={`flex items-center ${rent.color}`}>
+                {rent.icon}
+              </span>
+              <span>{rent.label}</span>
             </div>
           )}
           {crime && (
-            <div className="flex flex-col items-center justify-center rounded-xl border border-gray-800 bg-[#111111] px-6 py-4 text-center text-white shadow-md">
-              <div className="flex gap-2">
-                <span className={`flex items-center ${crime.color}`}>
-                  {crime.icon}
-                </span>
-                <span> {crime.label}</span>
-              </div>
+            <div className="flex items-center justify-center gap-2 rounded-xl border border-gray-800 bg-[#111111] px-4 py-3 text-white shadow-md">
+              <span className={`flex items-center ${crime.color}`}>
+                {crime.icon}
+              </span>
+              <span>{crime.label}</span>
             </div>
           )}
           {youth && (
-            <div className="flex flex-col items-center justify-center rounded-xl border border-gray-800 bg-[#111111] px-6 py-4 text-center text-white shadow-md">
-              <div className="flex gap-2">
-                <span className="flex items-center">{youth.icon}</span>
-                <span> {youth.label}</span>
-              </div>
+            <div className="flex items-center justify-center gap-2 rounded-xl border border-gray-800 bg-[#111111] px-4 py-3 text-white shadow-md">
+              <span className="flex items-center">{youth.icon}</span>
+              <span>{youth.label}</span>
             </div>
           )}
         </div>
+
         <CommunityRatings boroughSlug={slug as string} />
       </div>
     </div>
