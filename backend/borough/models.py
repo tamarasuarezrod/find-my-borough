@@ -1,14 +1,19 @@
 from django.db import models
 from django.contrib.auth import get_user_model
 from django.core.validators import MinValueValidator, MaxValueValidator
+from cloudinary_storage.storage import MediaCloudinaryStorage
 
 User = get_user_model()
 
 class Borough(models.Model):
     name = models.CharField(max_length=100)
     slug = models.SlugField(unique=True)
-    image = models.ImageField(upload_to='boroughs/', blank=True, null=True)
-
+    image = models.ImageField(
+        upload_to='boroughs/', 
+        storage=MediaCloudinaryStorage(),
+        blank=True, 
+        null=True
+    )
 
     norm_rent = models.FloatField(null=True, blank=True)
     norm_crime = models.FloatField(null=True, blank=True)
