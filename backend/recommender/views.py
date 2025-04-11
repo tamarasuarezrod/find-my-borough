@@ -5,8 +5,14 @@ import torch.nn as nn
 from django.conf import settings
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
+from rest_framework.views import APIView
+from rest_framework.permissions import IsAuthenticated
+from rest_framework import status
 
-from borough.models import Borough  # 👈 Importamos el modelo
+from .serializers import MatchAnswerSerializer
+from borough.models import Borough
+from .models import MatchQuestion
+from .serializers import MatchQuestionSerializer
 
 class ScoreModel(nn.Module):
     def __init__(self):
@@ -71,3 +77,19 @@ def recommend_boroughs(request):
     user_preferences = request.data
     recommendations = get_recommendations(user_preferences)
     return Response(recommendations)
+
+class SaveUserAnswersView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        serializer = MatchAnswerSerializer(data=request.data, context={"request": request})
+        if serializer.is_valid():
+            serializer.save()
+            return Response({"status": "answers saved"}, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class MatchQuestionListView(APIView):
+    def get(self, request):
+        questions = MatchQuestion.objects.prefetch_related('options').all()
+        serializer = MatchQuestionSerializer(questions, many=True)
+        return Response(serializer.data)
