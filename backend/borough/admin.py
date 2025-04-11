@@ -1,15 +1,10 @@
 from django.contrib import admin
-from .models import Borough, CommunityFeature, CommunityRating
+from .models import Borough, CommunityRating
 
 @admin.register(Borough)
 class BoroughAdmin(admin.ModelAdmin):
     list_display = ('name', 'slug')
     prepopulated_fields = {"slug": ("name",)}
-
-@admin.register(CommunityFeature)
-class CommunityFeatureAdmin(admin.ModelAdmin):
-    list_display = ('id', 'label')
-    search_fields = ('id', 'label')
 
 @admin.register(CommunityRating)
 class CommunityRatingAdmin(admin.ModelAdmin):

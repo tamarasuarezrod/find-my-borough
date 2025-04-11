@@ -1,5 +1,8 @@
 from django.db import models
 from django.contrib.auth import get_user_model
+from borough.models import Borough
+import hashlib
+import json
 
 User = get_user_model()
 
@@ -31,11 +34,30 @@ class MatchOption(models.Model):
         return f"{self.question.id} → {self.label}"
 
 
-class UserMatchAnswer(models.Model):
+class UserMatchAnswerSet(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    question = models.ForeignKey(MatchQuestion, on_delete=models.CASCADE)
-    selected_value = models.CharField(max_length=100)
+    answers = models.JSONField()
+    hash = models.CharField(max_length=64)
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
-        unique_together = ('user', 'question', 'created_at')
+        unique_together = ('user', 'hash')
+    
+    def __str__(self):
+        return f"{self.user} – {self.created_at.strftime('%Y-%m-%d %H:%M')}"
+
+
+    @staticmethod
+    def calculate_hash(answers: dict) -> str:
+        """Deterministic hash based on the answers JSON"""
+        return hashlib.sha256(json.dumps(answers, sort_keys=True).encode()).hexdigest()
+
+class UserMatchFeedback(models.Model):
+    answer_set = models.ForeignKey(UserMatchAnswerSet, on_delete=models.CASCADE)
+    borough = models.ForeignKey(Borough, on_delete=models.CASCADE)
+    feedback = models.BooleanField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('answer_set', 'borough')
+

@@ -1,13 +1,15 @@
 from django.contrib import admin
-from .models import MatchQuestion, MatchOption, UserMatchAnswer
+from .models import UserMatchAnswerSet, UserMatchFeedback
 
-class MatchOptionInline(admin.TabularInline):
-    model = MatchOption
-    extra = 1
+@admin.register(UserMatchAnswerSet)
+class UserMatchAnswerSetAdmin(admin.ModelAdmin):
+    list_display = ('user', 'hash', 'created_at')
+    search_fields = ('user__email', 'hash')
+    readonly_fields = ('hash', 'created_at')
+    list_filter = ('created_at',)
 
-@admin.register(MatchQuestion)
-class MatchQuestionAdmin(admin.ModelAdmin):
-    inlines = [MatchOptionInline]
-    list_display = ['id', 'title', 'question_type']
-
-admin.site.register(UserMatchAnswer)
+@admin.register(UserMatchFeedback)
+class UserMatchFeedbackAdmin(admin.ModelAdmin):
+    list_display = ('answer_set', 'borough', 'feedback', 'created_at')
+    list_filter = ('feedback', 'created_at', 'borough')
+    search_fields = ('answer_set__user__email', 'borough__name')

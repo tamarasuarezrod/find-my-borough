@@ -9,9 +9,8 @@ from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
 
-from .serializers import MatchAnswerSerializer
 from borough.models import Borough
-from .models import MatchQuestion
+from .models import MatchQuestion, UserMatchAnswerSet, UserMatchFeedback
 from .serializers import MatchQuestionSerializer
 
 class ScoreModel(nn.Module):
@@ -79,15 +78,66 @@ def recommend_boroughs(request):
     recommendations = get_recommendations(user_preferences)
     return Response(recommendations)
 
-class SaveUserAnswersView(APIView):
+class SaveUserAnswersOnlyView(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request):
-        serializer = MatchAnswerSerializer(data=request.data, context={"request": request})
-        if serializer.is_valid():
-            serializer.save()
-            return Response({"status": "answers saved"}, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        user = request.user
+        answers = request.data.get("answers")
+
+        if not answers:
+            return Response({"error": "Missing answers"}, status=400)
+
+        answer_hash = UserMatchAnswerSet.calculate_hash(answers)
+        UserMatchAnswerSet.objects.get_or_create(
+            user=user,
+            hash=answer_hash,
+            defaults={"answers": answers}
+        )
+
+        return Response({"status": "answers saved"}, status=201)
+
+
+class SaveUserFeedbackView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        user = request.user
+        borough_slug = request.data.get("borough")
+        feedback_value = request.data.get("feedback")
+
+        if not borough_slug or feedback_value is None:
+            return Response({"error": "Missing data"}, status=400)
+
+        try:
+            borough = Borough.objects.get(slug=borough_slug)
+        except Borough.DoesNotExist:
+            return Response({"error": "Borough not found"}, status=404)
+
+        latest_answer_set = (
+            UserMatchAnswerSet.objects
+            .filter(user=user)
+            .order_by('-created_at')
+            .first()
+        )
+
+        if not latest_answer_set:
+            return Response({"error": "No answer set found"}, status=404)
+
+        feedback, created = UserMatchFeedback.objects.get_or_create(
+            answer_set=latest_answer_set,
+            borough=borough,
+            defaults={"feedback": feedback_value}
+        )
+
+        if not created:
+            if feedback.feedback == feedback_value:
+                return Response({"status": "unchanged"}, status=200)
+            feedback.feedback = feedback_value
+            feedback.save()
+            return Response({"status": "updated"}, status=200)
+
+        return Response({"status": "created"}, status=201)
 
 class MatchQuestionListView(APIView):
     def get(self, request):

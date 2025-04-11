@@ -12,6 +12,7 @@ import {
 import Link from 'next/link'
 import { useBoroughsContext } from '@/context/boroughs-context'
 import FeedbackButtons from '@/components/feedback-buttons'
+import { useSendFeedback } from '@/services/send-feedback'
 
 type Recommendation = {
   borough: string
@@ -24,7 +25,10 @@ type Recommendation = {
 
 export default function ResultsPage() {
   const [recommendations, setRecommendations] = useState<Recommendation[]>([])
+  const [localVotes, setLocalVotes] = useState<Record<string, boolean>>({})
+
   const { boroughs } = useBoroughsContext()
+  const { mutateAsync: sendFeedbackMutation } = useSendFeedback()
 
   useEffect(() => {
     const stored = sessionStorage.getItem('recommendations')
@@ -36,7 +40,18 @@ export default function ResultsPage() {
   }, [])
 
   const sendFeedback = async (borough: string, feedback: string) => {
-    // TODO: send feedback to backend
+    try {
+      await sendFeedbackMutation({
+        borough,
+        feedback: feedback === 'like',
+      })
+      setLocalVotes((prev) => ({
+        ...prev,
+        [borough]: feedback === 'like',
+      }))
+    } catch (err) {
+      console.error('Failed to send feedback', err)
+    }
   }
 
   if (!boroughs) return null
@@ -120,8 +135,9 @@ export default function ResultsPage() {
 
           <div className="mb-14 mr-2 flex flex-col items-end text-sm text-gray-500">
             <FeedbackButtons
-              boroughName={topBorough.name}
+              boroughSlug={topBorough.slug}
               onSendFeedback={sendFeedback}
+              selected={localVotes[topBorough.slug]}
             />
           </div>
         </>
@@ -140,9 +156,10 @@ export default function ResultsPage() {
           return (
             <div key={details.slug} className="relative">
               <FeedbackButtons
-                boroughName={details.name}
+                boroughSlug={details.slug}
                 onSendFeedback={sendFeedback}
                 variant="icon-only"
+                selected={localVotes[details.slug]}
               />
               <BoroughCard
                 scoreLabel={`Score: ${(rec.score * 100).toFixed(0)}%`}
