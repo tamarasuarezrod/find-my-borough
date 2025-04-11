@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import toast from 'react-hot-toast'
 import CircleRating from '@/components/circle-rating'
+import { useSession } from 'next-auth/react'
 
 type CommunityRatingsProps = {
   ratings: {
@@ -13,6 +14,7 @@ type CommunityRatingsProps = {
 }
 
 export default function CommunityRatings({ ratings }: CommunityRatingsProps) {
+  const { status } = useSession()
   const [isVoting, setIsVoting] = useState(false)
   const [votes, setVotes] = useState<number[]>([])
 
@@ -26,12 +28,15 @@ export default function CommunityRatings({ ratings }: CommunityRatingsProps) {
     toast.success('Thanks for your vote!')
     setIsVoting(false)
     setVotes([])
-    // Podés enviar al backend si querés acá
   }
 
   const startVoting = () => {
-    setIsVoting(true)
-    setVotes(ratings.map(() => 0)) // inicia todos en 0
+    if (status === 'unauthenticated') {
+      toast.error("Please log in to vote, we'd love to hear your opinion!")
+    } else {
+      setIsVoting(true)
+      setVotes(ratings.map(() => 0))
+    }
   }
 
   return (

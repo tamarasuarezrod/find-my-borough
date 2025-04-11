@@ -1,6 +1,6 @@
 'use client'
 
-import { Check } from 'lucide-react'
+import { Check, X } from 'lucide-react'
 import { Toaster } from 'react-hot-toast'
 
 export default function ToastProvider() {
@@ -8,7 +8,7 @@ export default function ToastProvider() {
     <Toaster
       position="top-right"
       toastOptions={{
-        duration: 2000,
+        duration: 3000,
         style: {
           background: '#18181b',
           color: '#fff',
@@ -30,6 +30,7 @@ export default function ToastProvider() {
           },
         },
         error: {
+          icon: <X className="h-4 w-4 text-white" />,
           iconTheme: {
             primary: '#ef4444',
             secondary: '#18181b',

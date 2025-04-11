@@ -34,7 +34,7 @@ def predict_score(user_weights, borough_features):
         x = torch.tensor([user_weights + borough_features], dtype=torch.float32)
         return model(x).item()
 
-def get_recommendations(user_preferences, top_n=5):
+def get_recommendations(user_preferences, top_n=4):
     weights = [
         user_preferences.get("budget_weight", 0),
         user_preferences.get("safety_weight", 0),

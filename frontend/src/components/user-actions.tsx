@@ -1,0 +1,77 @@
+'use client'
+
+import { signIn, signOut, useSession } from 'next-auth/react'
+import { useState, useEffect, useRef } from 'react'
+import { useGoogleLogin } from '@/services/post-google-login'
+
+export default function UserActions() {
+  const { data: session, status } = useSession()
+  const [menuOpen, setMenuOpen] = useState(false)
+  const menuRef = useRef<HTMLDivElement>(null)
+  const { mutateAsync: loginToBackend } = useGoogleLogin()
+
+  useEffect(() => {
+    const sync = async () => {
+      if (session?.id_token) {
+        try {
+          await loginToBackend(session.id_token)
+          console.log('Synced with backend')
+        } catch (error) {
+          console.error('Error syncing auth with backend', error)
+        }
+      }
+    }
+
+    sync()
+  }, [session, loginToBackend])
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+        setMenuOpen(false)
+      }
+    }
+
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [])
+
+  if (status === 'loading') return null
+
+  if (!session) {
+    return (
+      <button
+        onClick={() => signIn('google')}
+        className="rounded-full border border-white px-4 py-1 text-sm transition hover:bg-white hover:text-black"
+      >
+        Log in
+      </button>
+    )
+  }
+
+  return (
+    <div className="relative" ref={menuRef}>
+      <button
+        onClick={() => setMenuOpen((prev) => !prev)}
+        className="ml-4 rounded-full border-2 border-white transition hover:scale-105"
+      >
+        <img
+          src={session.user?.image || ''}
+          alt="Profile"
+          className="h-8 w-8 rounded-full"
+        />
+      </button>
+
+      {menuOpen && (
+        <div className="absolute right-0 z-10 mt-2 w-32 rounded-md bg-zinc-800 p-2 shadow-lg">
+          <button
+            onClick={() => signOut()}
+            className="w-full rounded px-3 py-2 text-left text-sm hover:bg-zinc-700"
+          >
+            Logout
+          </button>
+        </div>
+      )}
+    </div>
+  )
+}

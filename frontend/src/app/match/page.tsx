@@ -1,8 +1,11 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useRecommendation } from '@/services/get-recommendation'
+import LoginModal from '@/components/login-modal'
+import { useSession } from 'next-auth/react'
+import toast from 'react-hot-toast'
 
 const questions = [
   {
@@ -70,13 +73,21 @@ const questions = [
 ]
 
 export default function MatchPage() {
+  const { status } = useSession()
   const router = useRouter()
   const [answers, setAnswers] = useState<
     Record<string, number | boolean | string>
   >({})
   const [error, setError] = useState<string | null>(null)
+  const [showLoginModal, setShowLoginModal] = useState(false)
 
   const { mutateAsync: fetchRecommendation } = useRecommendation()
+
+  useEffect(() => {
+    if (status === 'unauthenticated') {
+      setShowLoginModal(true)
+    }
+  }, [status])
 
   const handleSelect = (
     questionId: string,
@@ -87,6 +98,15 @@ export default function MatchPage() {
   }
 
   const handleSubmit = async () => {
+    const answeredCount = Object.keys(answers).length
+
+    if (answeredCount < 4) {
+      toast.error('Please answer at least 4 questions before continuing', {
+        duration: 4000,
+      })
+      return
+    }
+
     const defaultValues = {
       budget_weight: 0,
       safety_weight: 0,
@@ -110,8 +130,15 @@ export default function MatchPage() {
     }
   }
 
+  const closeModal = () => {
+    setShowLoginModal(false)
+    router.push('/')
+  }
+
   return (
     <div className="mx-auto max-w-7xl px-4 py-10">
+      {showLoginModal && <LoginModal onClose={closeModal} />}
+
       <h1 className="mb-2 text-center text-3xl font-semibold">
         Find Your Match
       </h1>
@@ -121,37 +148,39 @@ export default function MatchPage() {
 
       {error && <p className="mb-6 text-center text-red-400">{error}</p>}
 
-      <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
-        {questions.map((q) => (
-          <div key={q.id} className="rounded-xl bg-zinc-900 p-6">
-            <h2 className="mb-1 text-lg font-medium">{q.title}</h2>
-            <p className="mb-4 text-sm text-gray-400">{q.description}</p>
-            <div className="flex flex-col gap-2">
-              {q.options.map((opt) => (
-                <button
-                  key={opt.label}
-                  onClick={() => handleSelect(q.id, opt.value)}
-                  className={`rounded-lg border px-4 py-2 text-left ${
-                    answers[q.id] === opt.value
-                      ? 'border-white bg-white text-black'
-                      : 'border-zinc-700 hover:bg-zinc-800'
-                  }`}
-                >
-                  {opt.label}
-                </button>
-              ))}
+      <div>
+        <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
+          {questions.map((q) => (
+            <div key={q.id} className="rounded-xl bg-zinc-900 p-6">
+              <h2 className="mb-1 text-lg font-medium">{q.title}</h2>
+              <p className="mb-4 text-sm text-gray-400">{q.description}</p>
+              <div className="flex flex-col gap-2">
+                {q.options.map((opt) => (
+                  <button
+                    key={opt.label}
+                    onClick={() => handleSelect(q.id, opt.value)}
+                    className={`rounded-lg border px-4 py-2 text-left ${
+                      answers[q.id] === opt.value
+                        ? 'border-white bg-white text-black'
+                        : 'border-zinc-700 hover:bg-zinc-800'
+                    }`}
+                  >
+                    {opt.label}
+                  </button>
+                ))}
+              </div>
             </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
 
-      <div className="mt-10 flex justify-center">
-        <button
-          onClick={handleSubmit}
-          className="rounded-full bg-white px-8 py-3 font-medium text-black shadow transition hover:scale-105"
-        >
-          Find my match →
-        </button>
+        <div className="mt-10 flex justify-center">
+          <button
+            onClick={handleSubmit}
+            className="rounded-full bg-white px-8 py-3 font-medium text-black shadow transition hover:scale-105"
+          >
+            Find my match →
+          </button>
+        </div>
       </div>
     </div>
   )
