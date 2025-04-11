@@ -18,6 +18,7 @@ cryptography==44.0.2
 debugpy==1.8.13
 decorator==5.2.1
 defusedxml==0.7.1
+dj-database-url==2.3.0
 dj-rest-auth==7.0.1
 Django==5.2
 django-allauth==65.7.0
@@ -124,4 +125,5 @@ wcwidth==0.2.13
 webcolors==24.11.1
 webencodings==0.5.1
 websocket-client==1.8.0
+whitenoise==6.9.0
 xlrd==2.0.1
