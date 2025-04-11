@@ -1,34 +1,50 @@
 import requests
 from django.contrib.auth import get_user_model
-from rest_framework.decorators import api_view
+from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from rest_framework.authtoken.models import Token
+from rest_framework_simplejwt.tokens import RefreshToken
+from google.auth.transport import requests as google_requests
+from google.oauth2 import id_token
+import google.auth.exceptions
 
 User = get_user_model()
 
-@api_view(['POST'])
-def google_login(request):
-    token_id = request.data.get('token')
+class GoogleLoginAPIView(APIView):
+    def post(self, request):
+        token_id = request.data.get('token')
 
-    if not token_id:
-        return Response({'error': 'Token is required'}, status=status.HTTP_400_BAD_REQUEST)
+        if not token_id:
+            return Response({'error': 'Token is required'}, status=status.HTTP_400_BAD_REQUEST)
 
-    google_response = requests.get(
-        f'https://oauth2.googleapis.com/tokeninfo?id_token={token_id}'
-    )
+        try:
+            idinfo = id_token.verify_oauth2_token(
+                token_id,
+                google_requests.Request(),
+                # Tu client ID de Google, opcional pero recomendable
+                # Si querés validar que venga de tu app:
+                # os.environ.get('GOOGLE_CLIENT_ID')
+            )
+        except google.auth.exceptions.GoogleAuthError:
+            return Response({'error': 'Invalid token'}, status=status.HTTP_400_BAD_REQUEST)
 
-    if google_response.status_code != 200:
-        return Response({'error': 'Invalid token'}, status=status.HTTP_400_BAD_REQUEST)
+        email = idinfo.get('email')
+        name = idinfo.get('name')
 
-    data = google_response.json()
-    email = data.get('email')
-    name = data.get('name')
+        if not email:
+            return Response({'error': 'Email not found in token'}, status=status.HTTP_400_BAD_REQUEST)
 
-    if not email:
-        return Response({'error': 'Email not found in token'}, status=status.HTTP_400_BAD_REQUEST)
+        user, _ = User.objects.get_or_create(email=email, defaults={
+            'username': email,
+            'first_name': name or email.split('@')[0],
+        })
 
-    user, created = User.objects.get_or_create(email=email, defaults={'username': email, 'first_name': name})
-    token, _ = Token.objects.get_or_create(user=user)
+        # Generar JWT
+        refresh = RefreshToken.for_user(user)
 
-    return Response({'token': token.key, 'email': user.email, 'name': user.first_name})
+        return Response({
+            'access': str(refresh.access_token),
+            'refresh': str(refresh),
+            'email': user.email,
+            'name': user.first_name,
+        })

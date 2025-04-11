@@ -34,6 +34,7 @@ INSTALLED_APPS = [
     # Custom apps
     'recommender',
     'borough',
+    'accounts',
 ]
 
 MIDDLEWARE = [
@@ -106,7 +107,6 @@ CLOUDINARY_STORAGE = {
     'API_SECRET': config("CLOUDINARY_API_SECRET"),
 }
 
-
 # Default primary key field type
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
@@ -128,7 +128,7 @@ SOCIALACCOUNT_LOGIN_ON_GET = True
 # Django REST Framework settings
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework.authentication.TokenAuthentication',  # Token Authentication for simplicity
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
     ],
 }
 

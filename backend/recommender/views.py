@@ -42,10 +42,10 @@ def predict_score(user_weights, borough_features):
 
 def get_recommendations(user_preferences, top_n=4):
     weights = [
-        user_preferences.get("budget_weight", 0),
-        user_preferences.get("safety_weight", 0),
-        user_preferences.get("youth_weight", 0),
-        user_preferences.get("centrality_weight", 0),
+        float(user_preferences.get("budget_weight", 0) or 0),
+        float(user_preferences.get("safety_weight", 0) or 0),
+        float(user_preferences.get("youth_weight", 0) or 0),
+        float(user_preferences.get("centrality_weight", 0) or 0),
     ]
 
     recommendations = []
