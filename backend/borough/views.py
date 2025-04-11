@@ -1,16 +1,6 @@
 from rest_framework import generics
 from .models import Borough
 from .serializers import BoroughSerializer
-
-class BoroughListView(generics.ListAPIView):
-    queryset = Borough.objects.all()
-    serializer_class = BoroughSerializer
-
-class BoroughDetailView(generics.RetrieveAPIView):
-    queryset = Borough.objects.all()
-    serializer_class = BoroughSerializer
-    lookup_field = 'slug'
-
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
@@ -23,6 +13,16 @@ from .serializers import (
     CommunityRatingPostSerializer,
 )
 from borough.models import Borough
+
+class BoroughListView(generics.ListAPIView):
+    queryset = Borough.objects.all().order_by('-norm_centrality')
+    serializer_class = BoroughSerializer
+
+class BoroughDetailView(generics.RetrieveAPIView):
+    queryset = Borough.objects.all()
+    serializer_class = BoroughSerializer
+    lookup_field = 'slug'
+
 
 class CommunityFeatureListView(APIView):
     def get(self, request):

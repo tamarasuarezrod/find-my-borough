@@ -2,16 +2,23 @@ import { api } from '@/lib/axios'
 import { useMutation } from '@tanstack/react-query'
 
 export type GoogleLoginResponse = {
-  token: string
+  access: string
+  refresh: string
   email: string
   name: string
 }
 
-const postGoogleLogin = async (token: string): Promise<GoogleLoginResponse> => {
-  const response = await api.post('/account/google/', {
-    token,
-  })
-  return response.data
+const postGoogleLogin = async (
+  id_token: string,
+): Promise<GoogleLoginResponse> => {
+  const res = await api.post('/account/google/', { token: id_token })
+
+  const { access, refresh } = res.data
+
+  localStorage.setItem('access_token', access)
+  localStorage.setItem('refresh_token', refresh)
+
+  return res.data
 }
 
 export const useGoogleLogin = () => {

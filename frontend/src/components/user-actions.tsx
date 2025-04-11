@@ -1,8 +1,11 @@
 'use client'
 
-import { signIn, signOut, useSession } from 'next-auth/react'
+import { useSession } from 'next-auth/react'
 import { useState, useEffect, useRef } from 'react'
+import Image from 'next/image'
 import { useGoogleLogin } from '@/services/post-google-login'
+import { loginWithGoogle, logoutUser } from '@/lib/auth'
+import { User } from 'lucide-react'
 
 export default function UserActions() {
   const { data: session, status } = useSession()
@@ -12,18 +15,17 @@ export default function UserActions() {
 
   useEffect(() => {
     const sync = async () => {
-      if (session?.id_token) {
+      if (session?.id_token && !localStorage.getItem('access_token')) {
         try {
           await loginToBackend(session.id_token)
-          console.log('Synced with backend')
-        } catch (error) {
-          console.error('Error syncing auth with backend', error)
+        } catch (err) {
+          console.error('Sync failed', err)
         }
       }
     }
 
     sync()
-  }, [session, loginToBackend])
+  }, [session?.id_token, loginToBackend])
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -41,7 +43,7 @@ export default function UserActions() {
   if (!session) {
     return (
       <button
-        onClick={() => signIn('google')}
+        onClick={loginWithGoogle}
         className="rounded-full border border-white px-4 py-1 text-sm transition hover:bg-white hover:text-black"
       >
         Log in
@@ -55,17 +57,25 @@ export default function UserActions() {
         onClick={() => setMenuOpen((prev) => !prev)}
         className="ml-4 rounded-full border-2 border-white transition hover:scale-105"
       >
-        <img
-          src={session.user?.image || ''}
-          alt="Profile"
-          className="h-8 w-8 rounded-full"
-        />
+        {session.user?.image ? (
+          <Image
+            src={session.user.image}
+            alt="Profile"
+            width={32}
+            height={32}
+            className="h-8 w-8 rounded-full object-cover"
+          />
+        ) : (
+          <div className="flex h-8 w-8 items-center justify-center text-white">
+            <User className="h-4 w-4" />
+          </div>
+        )}
       </button>
 
       {menuOpen && (
         <div className="absolute right-0 z-10 mt-2 w-32 rounded-md bg-zinc-800 p-2 shadow-lg">
           <button
-            onClick={() => signOut()}
+            onClick={logoutUser}
             className="w-full rounded px-3 py-2 text-left text-sm hover:bg-zinc-700"
           >
             Logout

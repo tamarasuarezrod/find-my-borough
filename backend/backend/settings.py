@@ -116,6 +116,12 @@ if DEBUG:
 else:
     CORS_ALLOWED_ORIGINS = config('CORS_ALLOWED_ORIGINS', default='https://findmyborough.uk').split(',')
 
+# CSRF trusted origins
+if DEBUG:
+    CSRF_TRUSTED_ORIGINS = ['http://localhost:3000']
+else:
+    CSRF_TRUSTED_ORIGINS = config('CSRF_TRUSTED_ORIGINS', default='https://findmyborough.uk').split(',')
+
 # JWT and social account settings
 REST_USE_JWT = True
 ACCOUNT_LOGIN_METHODS = ['username']

@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { getSession } from 'next-auth/react'
+import { refreshAccessToken } from './auth'
 
 export const api = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL,
@@ -8,12 +8,29 @@ export const api = axios.create({
   },
 })
 
-api.interceptors.request.use(async (config) => {
-  const session = await getSession()
-
-  if (session?.id_token) {
-    config.headers.Authorization = `Bearer ${session.id_token}`
+api.interceptors.request.use((config) => {
+  const token = localStorage.getItem('access_token')
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`
   }
-
   return config
 })
+
+api.interceptors.response.use(
+  (response) => response,
+  async (error) => {
+    const originalRequest = error.config
+
+    if (error.response?.status === 401 && !originalRequest._retry) {
+      originalRequest._retry = true
+      const newAccessToken = await refreshAccessToken()
+
+      if (newAccessToken) {
+        originalRequest.headers.Authorization = `Bearer ${newAccessToken}`
+        return api(originalRequest)
+      }
+    }
+
+    return Promise.reject(error)
+  },
+)

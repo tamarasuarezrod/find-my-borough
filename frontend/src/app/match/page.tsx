@@ -6,8 +6,8 @@ import { useRecommendation } from '@/services/get-recommendation'
 import { useSaveUserAnswers } from '@/services/save-answers'
 import { MatchQuestion, useMatchQuestions } from '@/services/get-questions'
 import { useSession } from 'next-auth/react'
-import LoginModal from '@/components/login-modal'
 import toast from 'react-hot-toast'
+import LoginModal from '@/components/login-modal'
 
 export default function MatchPage() {
   const { status } = useSession()

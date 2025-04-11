@@ -8,6 +8,7 @@ import {
   useCommunityScores,
   useSubmitCommunityRatings,
 } from '@/services/community-rating'
+import { Score } from '@/types/borough'
 
 type CommunityRatingsProps = {
   boroughSlug: string
@@ -17,7 +18,10 @@ export default function CommunityRatings({
   boroughSlug,
 }: CommunityRatingsProps) {
   const { status } = useSession()
-  const { data: scores, refetch } = useCommunityScores(boroughSlug)
+  const { data: scores, refetch } = useCommunityScores(boroughSlug) as {
+    data: Score[] | undefined
+    refetch: () => void
+  }
   const { mutateAsync: submitRatings } = useSubmitCommunityRatings()
 
   const [isVoting, setIsVoting] = useState(false)
@@ -33,7 +37,7 @@ export default function CommunityRatings({
     } else {
       setIsVoting(true)
       const defaultVotes = Object.fromEntries(
-        (features || []).map((f: any) => [id, 0]),
+        (scores || []).map(({ feature }: Score) => [feature, 0]),
       )
       setVotes(defaultVotes)
     }
@@ -46,7 +50,7 @@ export default function CommunityRatings({
       setIsVoting(false)
       setVotes({})
       refetch()
-    } catch (err) {
+    } catch {
       toast.error('Failed to submit your vote')
     }
   }
@@ -58,9 +62,9 @@ export default function CommunityRatings({
       </h2>
 
       <div className="grid grid-cols-2 gap-x-4 gap-y-6 text-sm text-white sm:grid-cols-3">
-        {(scores || []).map(({ label, feature, scire }) => {
+        {(scores || []).map(({ label, feature }) => {
           const currentScore =
-            scores?.find((s: any) => s.feature === feature)?.score || 0
+            scores?.find((s) => s.feature === feature)?.score || 0
           const score = isVoting ? (votes[feature] ?? 0) : currentScore
 
           return (

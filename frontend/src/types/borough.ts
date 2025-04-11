@@ -5,6 +5,7 @@ export type Borough = {
   norm_rent?: number
   norm_crime?: number
   norm_youth?: number
+  norm_centrality: number
 }
 
 export type Recommendation = {
@@ -14,4 +15,10 @@ export type Recommendation = {
   norm_crime: number
   norm_youth: number
   norm_centrality: number
+}
+
+export type Score = {
+  feature: string
+  label: string
+  score: number
 }

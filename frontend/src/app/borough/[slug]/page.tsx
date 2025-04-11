@@ -3,6 +3,7 @@
 import { useParams } from 'next/navigation'
 import Image from 'next/image'
 import {
+  getCentralityIndicator,
   getCrimeIndicator,
   getRentIndicator,
   getYouthIndicator,
@@ -18,6 +19,7 @@ export default function BoroughDetailPage() {
   const rent = getRentIndicator(borough?.norm_rent)
   const crime = getCrimeIndicator(borough?.norm_crime)
   const youth = getYouthIndicator(borough?.norm_youth)
+  const centrality = getCentralityIndicator(borough?.norm_centrality)
 
   if (isLoading) {
     return <div className="text-center text-gray-400">Loading borough...</div>
@@ -26,27 +28,6 @@ export default function BoroughDetailPage() {
   if (isError || !borough) {
     return (
       <div className="text-center text-red-400">Failed to load the borough</div>
-    )
-  }
-
-  const getColor = (i: number, score: number) => {
-    if (i >= score) return 'bg-zinc-700'
-    if (score >= 4) return 'bg-green-400'
-    if (score >= 2) return 'bg-yellow-400'
-    return 'bg-red-400'
-  }
-  const CircleRating = ({ score }: { score: number }) => {
-    return (
-      <div className="flex gap-1">
-        {[...Array(5)].map((_, i) => (
-          <div
-            key={i}
-            className={`h-3 w-3 rounded-full ${
-              i < score ? 'bg-green-400' : 'bg-zinc-700'
-            }`}
-          />
-        ))}
-      </div>
     )
   }
 
@@ -69,6 +50,14 @@ export default function BoroughDetailPage() {
 
         {/* Indicators */}
         <div className="relative z-50 -mt-10 flex justify-center gap-6">
+          {centrality && (
+            <div className="flex flex-col items-center justify-center rounded-xl border border-gray-800 bg-[#111111] px-6 py-4 text-center text-white shadow-md">
+              <div className="flex gap-2">
+                <span className="flex items-center">{centrality.icon}</span>
+                <span>{centrality.label}</span>
+              </div>
+            </div>
+          )}
           {rent && (
             <div className="rounded-xl border border-gray-800 bg-[#111111] px-6 py-4 text-center text-white shadow-md">
               <div className="flex gap-2">

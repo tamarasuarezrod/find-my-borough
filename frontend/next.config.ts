@@ -6,6 +6,7 @@ const nextConfig = {
       'localhost',
       'api.findmyborough.uk',
       'res.cloudinary.com',
+      'lh3.googleusercontent.com',
     ],
   },
 }

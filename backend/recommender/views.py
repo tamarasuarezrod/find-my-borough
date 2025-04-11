@@ -67,6 +67,7 @@ def get_recommendations(user_preferences, top_n=4):
             "norm_rent": round(b.norm_rent, 2),
             "norm_crime": round(b.norm_crime, 2),
             "norm_youth": round(b.norm_youth, 2),
+            "norm_centrality": round(b.norm_centrality, 2),
         })
 
     recommendations.sort(key=lambda x: x["score"], reverse=True)

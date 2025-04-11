@@ -1,9 +1,9 @@
 'use client'
 
 import { useRouter } from 'next/navigation'
-import { signIn } from 'next-auth/react'
 import { X } from 'lucide-react'
 import Image from 'next/image'
+import { loginWithGoogle } from '@/lib/auth'
 
 interface LoginModalProps {
   onClose: () => void
@@ -35,7 +35,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ onClose }) => {
         </p>
 
         <button
-          onClick={() => signIn('google')}
+          onClick={loginWithGoogle}
           className="flex w-full items-center justify-center gap-3 rounded-full bg-white px-6 py-3 text-sm font-semibold text-zinc-800 shadow-sm transition hover:bg-gray-100"
         >
           <Image

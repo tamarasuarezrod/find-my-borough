@@ -26,7 +26,9 @@ export default function CircleRating({
           <button
             key={i}
             onClick={() => editable && onChange?.(i + 1)}
-            className={`h-4 w-4 rounded-full transition ${getColor()}`}
+            className={`h-4 w-4 rounded-full transition ${getColor()} ${
+              editable ? 'cursor-pointer' : 'cursor-default'
+            }`}
           />
         )
       })}

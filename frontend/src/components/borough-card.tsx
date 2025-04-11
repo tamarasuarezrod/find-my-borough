@@ -1,6 +1,7 @@
 'use client'
 
 import {
+  getCentralityIndicator,
   getCrimeIndicator,
   getRentIndicator,
   getYouthIndicator,
@@ -17,6 +18,7 @@ type Props = {
   norm_crime?: number
   norm_youth?: number
   scoreLabel?: string
+  norm_centrality?: number
 }
 
 export default function BoroughCard({
@@ -27,10 +29,12 @@ export default function BoroughCard({
   norm_rent,
   norm_crime,
   norm_youth,
+  norm_centrality,
 }: Props) {
   const rent = getRentIndicator(norm_rent)
   const crime = getCrimeIndicator(norm_crime)
   const youthInfo = getYouthIndicator(norm_youth)
+  const centrality = getCentralityIndicator(norm_centrality)
 
   return (
     <Link
@@ -55,6 +59,12 @@ export default function BoroughCard({
           {toTitleCase(name)}
         </h3>
         <div className="mt-2 flex flex-wrap items-center gap-4 text-sm text-gray-400">
+          {centrality && (
+            <div className="flex gap-1">
+              <span className="flex items-center">{centrality.icon}</span>
+              <span>{centrality.label}</span>
+            </div>
+          )}
           {rent && (
             <div className="flex gap-1">
               <span className={`flex items-center ${rent.color}`}>
@@ -68,7 +78,7 @@ export default function BoroughCard({
               <span className={`flex items-center ${crime.color}`}>
                 {crime.icon}
               </span>
-              <span> {crime.label}</span>
+              <span> {crime.shortLabel}</span>
             </div>
           )}
           {youthInfo && (

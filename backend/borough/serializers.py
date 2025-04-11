@@ -6,7 +6,7 @@ class BoroughSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Borough
-        fields = ['name', 'slug', 'image', 'norm_rent', 'norm_crime', 'norm_youth']
+        fields = ['name', 'slug', 'image', 'norm_rent', 'norm_crime', 'norm_youth', 'norm_centrality']
 
 class CommunityFeatureSerializer(serializers.ModelSerializer):
     class Meta:

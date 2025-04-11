@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import BoroughCard from '@/components/borough-card'
 import {
+  getCentralityIndicator,
   getCrimeIndicator,
   getRentIndicator,
   getYouthIndicator,
@@ -49,6 +50,7 @@ export default function ResultsPage() {
   const rent = getRentIndicator(top?.norm_rent)
   const crime = getCrimeIndicator(top?.norm_crime)
   const youth = getYouthIndicator(top?.norm_youth)
+  const centrality = getCentralityIndicator(top?.norm_centrality)
 
   return (
     <div className="mx-auto max-w-7xl px-6 py-10">
@@ -82,6 +84,14 @@ export default function ResultsPage() {
                 of your preferences.
               </p>
               <div className="mt-2 flex flex-wrap items-center gap-4 text-sm text-gray-400">
+                {centrality && (
+                  <div className="flex gap-1">
+                    <span className="flex items-center">
+                      {centrality?.icon}
+                    </span>
+                    <span>{centrality?.label}</span>
+                  </div>
+                )}
                 {rent && (
                   <div className="flex items-center gap-1">
                     <span className={`flex items-center ${rent.color}`}>
@@ -135,13 +145,8 @@ export default function ResultsPage() {
                 variant="icon-only"
               />
               <BoroughCard
-                slug={details.slug}
-                name={details.name}
-                image={details.image}
                 scoreLabel={`Score: ${(rec.score * 100).toFixed(0)}%`}
-                norm_rent={details.norm_rent}
-                norm_crime={details.norm_crime}
-                norm_youth={details.norm_youth}
+                {...details}
               />
             </div>
           )
