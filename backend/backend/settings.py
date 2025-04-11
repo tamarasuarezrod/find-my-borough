@@ -1,16 +1,16 @@
 from pathlib import Path
-from decouple import config
 import os
 import warnings
+from decouple import config
+import dj_database_url
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
-SECRET_KEY = 'django-insecure-g6vnsuuz#t0jy#-d=+r!&9dvsbm354utyhx6f6w=21g2!475q-'
-DEBUG = True
-ALLOWED_HOSTS = []
+# Environment-based settings
+SECRET_KEY = config('SECRET_KEY', default='insecure-key')
+DEBUG = config('DEBUG', default='True') == 'True'
+ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='').split(',') if not DEBUG else []
 
 # Application definition
 INSTALLED_APPS = [
@@ -36,13 +36,14 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'allauth.account.middleware.AccountMiddleware', 
+    'allauth.account.middleware.AccountMiddleware',
 ]
 
 ROOT_URLCONF = 'backend.urls'
@@ -66,14 +67,7 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 
 # Database configuration
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'findmyborough',
-        'USER': 'tamarasuarez',
-        'PASSWORD': 'tamarasuarez',
-        'HOST': 'localhost',
-        'PORT': '5432',
-    }
+    'default': dj_database_url.config(default=config('DATABASE_URL'))
 }
 
 # Password validation
@@ -91,9 +85,11 @@ USE_I18N = True
 USE_TZ = True
 
 # Static and media files configuration
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # Default primary key field type
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
@@ -102,9 +98,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 if DEBUG:
     CORS_ALLOW_ALL_ORIGINS = True
 else:
-    CORS_ALLOWED_ORIGINS = [
-        "https://findmyborough.uk",
-    ]
+    CORS_ALLOWED_ORIGINS = config('CORS_ALLOWED_ORIGINS', default='https://findmyborough.uk').split(',')
 
 # JWT and social account settings
 REST_USE_JWT = True
@@ -115,8 +109,6 @@ ACCOUNT_SIGNUP_REDIRECT_URL = '/'
 SOCIALACCOUNT_AUTO_SIGNUP = False
 SOCIALACCOUNT_LOGIN_ON_GET = True
 
-
-
 # Django REST Framework settings
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
@@ -125,14 +117,8 @@ REST_FRAMEWORK = {
 }
 
 # Suppress deprecation warnings
-warnings.filterwarnings(
-    "ignore",
-    message="app_settings.USERNAME_REQUIRED is deprecated",
-)
-warnings.filterwarnings(
-    "ignore",
-    message="app_settings.EMAIL_REQUIRED is deprecated",
-)
+warnings.filterwarnings("ignore", message="app_settings.USERNAME_REQUIRED is deprecated")
+warnings.filterwarnings("ignore", message="app_settings.EMAIL_REQUIRED is deprecated")
 
 # Site ID for social authentication
 SITE_ID = 1

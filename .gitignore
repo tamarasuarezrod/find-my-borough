@@ -28,3 +28,7 @@ staticfiles/
 
 # Jupyter Notebook
 **/.ipynb_checkpoints/
+
+# Environment variables
+**.env
+**.env.**
