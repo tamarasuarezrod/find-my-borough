@@ -1,4 +1,3 @@
-import requests
 from django.contrib.auth import get_user_model
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -7,6 +6,9 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from google.auth.transport import requests as google_requests
 from google.oauth2 import id_token
 import google.auth.exceptions
+from rest_framework_simplejwt.views import TokenRefreshView
+from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import csrf_exempt
 
 User = get_user_model()
 
@@ -48,3 +50,7 @@ class GoogleLoginAPIView(APIView):
             'email': user.email,
             'name': user.first_name,
         })
+
+@method_decorator(csrf_exempt, name='dispatch')
+class CustomTokenRefreshView(TokenRefreshView):
+    pass

@@ -11,7 +11,7 @@ export type GoogleLoginResponse = {
 const postGoogleLogin = async (
   id_token: string,
 ): Promise<GoogleLoginResponse> => {
-  const res = await api.post('/account/google/', { token: id_token })
+  const res = await api.post('/auth/google/', { token: id_token })
 
   const { access, refresh } = res.data
 

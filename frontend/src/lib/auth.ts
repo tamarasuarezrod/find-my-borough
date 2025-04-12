@@ -18,8 +18,7 @@ export const refreshAccessToken = async (): Promise<string | null> => {
     return newAccess
   } catch (err) {
     console.error('Failed to refresh token', err)
-    localStorage.removeItem('access_token')
-    localStorage.removeItem('refresh_token')
+    logoutUser()
     return null
   }
 }
