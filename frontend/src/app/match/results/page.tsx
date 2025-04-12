@@ -13,6 +13,7 @@ import Link from 'next/link'
 import { useBoroughsContext } from '@/context/boroughs-context'
 import FeedbackButtons from '@/components/feedback-buttons'
 import { useSendFeedback } from '@/services/send-feedback'
+import Image from 'next/image'
 
 type Recommendation = {
   borough: string
@@ -78,10 +79,12 @@ export default function ResultsPage() {
             className="mb-4 block items-center gap-6 rounded-3xl border border-zinc-700 bg-zinc-900 p-6 shadow-xl transition hover:scale-[1.01] md:flex"
           >
             <div className="relative mb-4 aspect-video w-full overflow-hidden rounded-2xl md:mb-0 md:w-1/2">
-              <img
+              <Image
                 src={topBorough.image}
                 alt={topBorough.name}
                 className="h-full w-full object-cover"
+                layout="fill"
+                objectFit="cover"
               />
             </div>
             <div className="text-white md:w-1/2">
