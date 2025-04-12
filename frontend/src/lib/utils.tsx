@@ -14,7 +14,7 @@ export function toTitleCase(str: string): string {
 }
 
 export function getYouthIndicator(score: number | undefined) {
-  if (!score) return null
+  if (score === undefined || score === null) return null
 
   if (score >= 0.6) {
     return {
@@ -35,7 +35,7 @@ export function getYouthIndicator(score: number | undefined) {
 }
 
 export function getRentIndicator(score: number | undefined) {
-  if (!score) return null
+  if (score === undefined || score === null) return null
 
   if (score >= 0.66) {
     return {
@@ -59,7 +59,7 @@ export function getRentIndicator(score: number | undefined) {
 }
 
 export function getCrimeIndicator(score: number | undefined) {
-  if (!score) return null
+  if (score === undefined || score === null) return null
 
   const crime = 1 - score
 

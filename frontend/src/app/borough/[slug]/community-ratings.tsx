@@ -10,8 +10,34 @@ import {
 } from '@/services/community-rating'
 import { Score } from '@/types/borough'
 
+import {
+  Users,
+  Leaf,
+  ShieldCheck,
+  Sparkles,
+  Bus,
+  Wifi,
+  Baby,
+  Footprints,
+  Smile,
+  Sprout,
+} from 'lucide-react'
+
 type CommunityRatingsProps = {
   boroughSlug: string
+}
+
+const featureIcons: Record<string, React.ReactNode> = {
+  diversity: <Users size={16} />,
+  green: <Leaf size={16} />,
+  safety: <ShieldCheck size={16} />,
+  cleanliness: <Sparkles size={16} />,
+  transport: <Bus size={16} />,
+  internet: <Wifi size={16} />,
+  family: <Baby size={16} />,
+  walkability: <Footprints size={16} />,
+  vibe: <Smile size={16} />,
+  openness: <Sprout size={16} />,
 }
 
 export default function CommunityRatings({
@@ -69,7 +95,9 @@ export default function CommunityRatings({
 
           return (
             <div key={feature}>
-              <p className="mb-1 flex items-center gap-2">{label}</p>
+              <p className="mb-1 flex items-center gap-2">
+                {featureIcons[feature]} {label}
+              </p>
               <CircleRating
                 score={score}
                 editable={isVoting}

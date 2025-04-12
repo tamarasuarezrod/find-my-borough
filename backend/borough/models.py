@@ -12,7 +12,8 @@ class Borough(models.Model):
         upload_to='boroughs/', 
         storage=MediaCloudinaryStorage(),
         blank=True, 
-        null=True
+        null=True,
+        max_length=300
     )
 
     norm_rent = models.FloatField(null=True, blank=True)

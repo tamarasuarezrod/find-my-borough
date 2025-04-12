@@ -29,7 +29,7 @@ class ScoreModel(nn.Module):
         return self.net(x)
 
 # Cargar modelo
-model_path = os.path.join(settings.BASE_DIR, "..", "models", "score_model.pth")
+model_path = os.path.join(settings.BASE_DIR, "models", "score_model.pth")
 model = ScoreModel()
 model.load_state_dict(torch.load(model_path))
 model.eval()
