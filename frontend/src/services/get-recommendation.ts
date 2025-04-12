@@ -1,5 +1,5 @@
 import { api } from '@/lib/axios'
-import { Recommendation } from '@/types/borough'
+import { UserAnswers } from '@/types/borough'
 import { useMutation } from '@tanstack/react-query'
 
 export type RecommendationResponse = {
@@ -12,7 +12,7 @@ export type RecommendationResponse = {
 }
 
 export const getRecommendation = async (
-  payload: Recommendation,
+  payload: UserAnswers,
 ): Promise<RecommendationResponse[]> => {
   const res = await api.post('/recommendations/', payload)
   return res.data

@@ -17,6 +17,13 @@ export type Recommendation = {
   norm_centrality: number
 }
 
+export type UserAnswers = {
+  budget_weight: string
+  is_student: string
+  safety_weight: string
+  stay_duration: string
+}
+
 export type Score = {
   feature: string
   label: string

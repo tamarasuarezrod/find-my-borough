@@ -8,6 +8,7 @@ import { MatchQuestion, useMatchQuestions } from '@/services/get-questions'
 import { useSession } from 'next-auth/react'
 import toast from 'react-hot-toast'
 import LoginModal from '@/components/login-modal'
+import { UserAnswers } from '@/types/borough'
 
 export default function MatchPage() {
   const { status } = useSession()
@@ -51,13 +52,11 @@ export default function MatchPage() {
         await saveAnswers.mutateAsync(answers)
       }
 
-      const data = await fetchRecommendation(answers)
+      const data = await fetchRecommendation(answers as UserAnswers)
       sessionStorage.setItem('recommendations', JSON.stringify(data))
       router.push('/match/results', { scroll: true })
-    } catch (err: any) {
-      console.error(err)
-      toast.error(err.message || 'Something went wrong')
-      setError(err.message || 'Something went wrong')
+    } catch {
+      toast.error('Something went wrong')
     }
   }
 

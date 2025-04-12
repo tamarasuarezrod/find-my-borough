@@ -1,6 +1,7 @@
 'use client'
 
-import { Borough, getBoroughs } from '@/services/get-boroughs'
+import { getBoroughs } from '@/services/get-boroughs'
+import { Borough } from '@/types/borough'
 import {
   createContext,
   useContext,
@@ -8,17 +9,16 @@ import {
   useState,
   ReactNode,
 } from 'react'
+import toast from 'react-hot-toast'
 
 type BoroughsContextType = {
   boroughs: Borough[] | null
   loading: boolean
-  error: string | null
 }
 
 const BoroughsContext = createContext<BoroughsContextType>({
   boroughs: null,
   loading: false,
-  error: null,
 })
 
 export const useBoroughsContext = () => useContext(BoroughsContext)
@@ -26,15 +26,16 @@ export const useBoroughsContext = () => useContext(BoroughsContext)
 export function BoroughsProvider({ children }: { children: ReactNode }) {
   const [boroughs, setBoroughs] = useState<Borough[] | null>(null)
   const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const data = await getBoroughs()
         setBoroughs(data)
-      } catch (err: any) {
-        setError(err.message)
+      } catch {
+        toast.error('Please answer at least 4 questions before continuing', {
+          duration: 4000,
+        })
       } finally {
         setLoading(false)
       }
@@ -44,7 +45,7 @@ export function BoroughsProvider({ children }: { children: ReactNode }) {
   }, [])
 
   return (
-    <BoroughsContext.Provider value={{ boroughs, loading, error }}>
+    <BoroughsContext.Provider value={{ boroughs, loading }}>
       {children}
     </BoroughsContext.Provider>
   )
