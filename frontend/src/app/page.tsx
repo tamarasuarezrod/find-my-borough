@@ -3,10 +3,8 @@
 import Link from 'next/link'
 import BoroughCard from '@/components/borough-card'
 import { useBoroughs } from '@/services/get-boroughs'
-import { useSession } from 'next-auth/react'
 
 export default function HomePage() {
-  const { status } = useSession()
   const { data: boroughs, isLoading, isError } = useBoroughs()
 
   if (isLoading) {
