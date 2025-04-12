@@ -30,17 +30,17 @@ export default function HomePage() {
         <h2 className="mb-4 text-3xl md:text-5xl">
           Find the perfect borough to live in London
         </h2>
-        <div className="mt-4 flex gap-4">
+        <div className="mt-4 flex flex-col items-center gap-4 sm:flex-row">
           <Link
             href="/match"
-            className="rounded-full bg-white px-6 py-2 text-black shadow transition hover:scale-105"
+            className="w-full rounded-full bg-white px-6 py-2 text-black shadow transition hover:scale-105 sm:w-auto"
           >
             ✨ Get your match
           </Link>
-          <span className="self-center text-lg">or</span>
+          <span className="text-lg sm:self-center">or</span>
           <Link
             href="/explore"
-            className="rounded-full border border-white bg-transparent px-6 py-2 transition hover:bg-white hover:text-black"
+            className="w-full rounded-full border border-white bg-transparent px-6 py-2 transition hover:bg-white hover:text-black sm:w-auto"
           >
             🔍 Explore
           </Link>

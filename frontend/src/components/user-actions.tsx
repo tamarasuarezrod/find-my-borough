@@ -44,7 +44,7 @@ export default function UserActions() {
     return (
       <button
         onClick={loginWithGoogle}
-        className="rounded-full border border-white px-4 py-1 text-sm transition hover:bg-white hover:text-black"
+        className="whitespace-nowrap rounded-full border border-white px-5 py-2 text-sm transition hover:bg-white hover:text-black"
       >
         Log in
       </button>
@@ -55,7 +55,7 @@ export default function UserActions() {
     <div className="relative" ref={menuRef}>
       <button
         onClick={() => setMenuOpen((prev) => !prev)}
-        className="ml-4 rounded-full border-2 border-white transition hover:scale-105"
+        className="ml-4 flex h-8 w-8 items-center justify-center overflow-hidden rounded-full border-2 border-white transition hover:scale-105"
       >
         {session.user?.image ? (
           <Image
@@ -66,9 +66,7 @@ export default function UserActions() {
             className="h-8 w-8 rounded-full object-cover"
           />
         ) : (
-          <div className="flex h-8 w-8 items-center justify-center text-white">
-            <User className="h-4 w-4" />
-          </div>
+          <User className="h-4 w-4 text-white" />
         )}
       </button>
 

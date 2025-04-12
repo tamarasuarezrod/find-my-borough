@@ -87,7 +87,7 @@ export default function CommunityRatings({
         What people are saying
       </h2>
 
-      <div className="grid grid-cols-2 gap-x-4 gap-y-6 text-sm text-white sm:grid-cols-3">
+      <div className="grid grid-cols-1 gap-y-6 text-sm text-white sm:grid-cols-3 sm:gap-x-4">
         {(scores || []).map(({ label, feature }) => {
           const currentScore =
             scores?.find((s) => s.feature === feature)?.score || 0

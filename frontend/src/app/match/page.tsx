@@ -85,7 +85,7 @@ export default function MatchPage() {
       <div>
         <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
           {questions.map((q: MatchQuestion) => (
-            <div key={q.id} className="rounded-xl bg-zinc-900 p-6">
+            <div key={q.id} className="md:rounded-xl md:bg-zinc-900 md:p-6">
               <h2 className="mb-1 text-lg font-medium">{q.title}</h2>
               <p className="mb-4 text-sm text-gray-400">{q.description}</p>
               <div className="flex flex-col gap-2">
