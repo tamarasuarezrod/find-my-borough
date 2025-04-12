@@ -42,7 +42,7 @@ export default function BoroughDetailPage() {
             className="object-cover"
           />
           <div className="absolute inset-0 flex flex-col items-center justify-center bg-black bg-opacity-40 p-8">
-            <h1 className="text-5xl font-bold text-white">
+            <h1 className="break-words text-center text-2xl font-bold text-white sm:text-4xl md:text-5xl">
               {toTitleCase(borough.name)}
             </h1>
           </div>
