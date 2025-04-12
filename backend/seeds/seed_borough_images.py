@@ -22,10 +22,13 @@ image_paths = {
     "redbridge": "boroughs/The_Thames_Riverside_At_Richmond_-_London._14344421406_zbjh82",
     "southwark": "boroughs/e3bcc001455a4d3a5989cd15b1b44af2_1_h2pd4z",
     "sutton": "boroughs/25198419819_cb78fa1f81_b_c7ot0p",
-    "tower-hamlets": "boroughs/The_White_Tower._City_of_London_mt8jek",
+    "tower-hamlets": "boroughs/The_White_Tower._City_of_London_qugpld",
     "waltham-forest": "boroughs/waltham_forest_2_brhsp1",
     "wandsworth": "boroughs/wandsworth_gtfpy7",
     "westminster": "boroughs/london-velikobritaniia-big-ben-westminster-bridge_1_so4esk",
+    "haringey": "boroughs/haringey_wmr0po",
+    "newham": "boroughs/newham_masuf6",
+    "lewisham": "boroughs/lewisham_vzqjmi",
 }
 
 BASE_URL = "https://res.cloudinary.com/djmajnlwm/image/upload/v1"

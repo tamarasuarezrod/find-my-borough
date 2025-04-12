@@ -19,9 +19,11 @@ export type Recommendation = {
 
 export type UserAnswers = {
   budget_weight: string
-  is_student: string
+  current_situation: string
   safety_weight: string
   stay_duration: string
+  centrality_weight: string
+  youth_weight: string
 }
 
 export type Score = {
