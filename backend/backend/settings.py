@@ -31,6 +31,7 @@ INSTALLED_APPS = [
     'allauth.socialaccount',
     'cloudinary',
     'cloudinary_storage',
+    'corsheaders',
     # Custom apps
     'recommender',
     'borough',
@@ -115,6 +116,7 @@ if DEBUG:
     CORS_ALLOW_ALL_ORIGINS = True
 else:
     CORS_ALLOWED_ORIGINS = config('CORS_ALLOWED_ORIGINS', default='https://findmyborough.uk').split(',')
+print( 'CORS_ALLOWED_ORIGINS',config('CORS_ALLOWED_ORIGINS'))
 
 # CSRF trusted origins
 if DEBUG:
