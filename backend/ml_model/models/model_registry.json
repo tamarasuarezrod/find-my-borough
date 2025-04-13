@@ -1,0 +1,14 @@
+[
+  {
+    "version": "v1",
+    "filename": "score_model_v1_2025-04-13.pth",
+    "date": "2025-04-13",
+    "val_loss": 0.1672193487174809,
+    "hyperparameters": {
+      "lr": 0.008065009901894247,
+      "hidden_dim_1": 15.0,
+      "hidden_dim_2": 32.0
+    },
+    "notes": "Retrained with best BO params"
+  }
+]
