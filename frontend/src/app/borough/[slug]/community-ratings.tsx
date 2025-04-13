@@ -23,6 +23,7 @@ import {
   Sprout,
 } from 'lucide-react'
 import { Loader } from '@/components/loader'
+import { showErrorToast } from '@/lib/utils'
 
 type CommunityRatingsProps = {
   boroughSlug: string
@@ -64,7 +65,7 @@ export default function CommunityRatings({
 
   const startVoting = () => {
     if (status === 'unauthenticated') {
-      toast.error("Please log in to vote, we'd love to hear your opinion!")
+      showErrorToast("Please log in to vote, we'd love to hear your opinion!")
     } else {
       setIsVoting(true)
       const defaultVotes = Object.fromEntries(
@@ -82,7 +83,7 @@ export default function CommunityRatings({
       setVotes({})
       refetch()
     } catch {
-      toast.error('Failed to submit your vote')
+      showErrorToast('Failed to submit your vote')
     }
   }
 

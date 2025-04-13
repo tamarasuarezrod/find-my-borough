@@ -1,5 +1,6 @@
 'use client'
 
+import { showErrorToast } from '@/lib/utils'
 import { getBoroughs } from '@/services/get-boroughs'
 import { Borough } from '@/types/borough'
 import {
@@ -9,7 +10,6 @@ import {
   useState,
   ReactNode,
 } from 'react'
-import toast from 'react-hot-toast'
 
 type BoroughsContextType = {
   boroughs: Borough[] | null
@@ -33,7 +33,7 @@ export function BoroughsProvider({ children }: { children: ReactNode }) {
         const data = await getBoroughs()
         setBoroughs(data)
       } catch {
-        toast.error('There was an error fetching boroughs.')
+        showErrorToast('There was an error fetching boroughs.')
       } finally {
         setLoading(false)
       }

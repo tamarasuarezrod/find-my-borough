@@ -6,9 +6,9 @@ import { useRecommendation } from '@/services/get-recommendation'
 import { useSaveUserAnswers } from '@/services/save-answers'
 import { MatchQuestion, useMatchQuestions } from '@/services/get-questions'
 import { useSession } from 'next-auth/react'
-import toast from 'react-hot-toast'
 import LoginModal from '@/components/login-modal'
 import { UserAnswers } from '@/types/borough'
+import { showErrorToast } from '@/lib/utils'
 
 export default function MatchPage() {
   const { status } = useSession()
@@ -41,9 +41,7 @@ export default function MatchPage() {
     const answeredCount = Object.keys(answers).length
 
     if (answeredCount < 4) {
-      toast.error('Please answer at least 4 questions before continuing', {
-        duration: 4000,
-      })
+      showErrorToast('Please answer at least 4 questions before continuing')
       return
     }
 
@@ -56,7 +54,7 @@ export default function MatchPage() {
       sessionStorage.setItem('recommendations', JSON.stringify(data))
       router.push('/match/results', { scroll: true })
     } catch {
-      toast.error('Something went wrong')
+      showErrorToast('Something went wrong')
     }
   }
 
