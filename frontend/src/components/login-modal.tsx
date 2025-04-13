@@ -3,7 +3,7 @@
 import { useRouter } from 'next/navigation'
 import { X } from 'lucide-react'
 import Image from 'next/image'
-import { loginWithGoogle } from '@/lib/auth'
+import { useAuth } from '@/context/auth-context'
 
 interface LoginModalProps {
   onClose: () => void
@@ -11,6 +11,7 @@ interface LoginModalProps {
 
 const LoginModal: React.FC<LoginModalProps> = ({ onClose }) => {
   const router = useRouter()
+  const { loginWithGoogle } = useAuth()
 
   const handleClose = () => {
     onClose()
