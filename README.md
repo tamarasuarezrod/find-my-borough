@@ -41,12 +41,14 @@ Users are asked to weight four criteria:
 │ └── src # App pages, components, services, styling
 ```
 
-## Data Sources
-
-Details about the datasets used in this project can be found in the [data README.md](backend/ml_model/data/README.md).
-
 ## Environments
 
 - Production: coming soon!
 
 - Staging: https://staging.findmyborough.uk/
+
+## Additional Documentation
+
+- **Data sheet** – Details on data sources, structure, preprocessing, and limitations. [View](./data_sheet.md)
+
+- **Model card** – Description of the model architecture, input/output, performance metrics, and trade-offs. [View](./model_card.md)

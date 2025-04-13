@@ -97,7 +97,7 @@ export default function ResultsPage() {
               <p className="mb-4 text-gray-300">
                 This borough matches{' '}
                 <span className="font-semibold text-green-400">
-                  {(top.score * 100).toFixed(1)}%
+                  {(top.score * 100).toFixed(0)}%
                 </span>{' '}
                 of your preferences.
               </p>
