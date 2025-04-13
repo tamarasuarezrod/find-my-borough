@@ -1,6 +1,5 @@
 import os
 import torch
-import torch.nn as nn
 
 from django.conf import settings
 from rest_framework.decorators import api_view
@@ -13,26 +12,9 @@ from borough.models import Borough
 from .models import MatchQuestion, UserMatchAnswerSet, UserMatchFeedback
 from .serializers import MatchQuestionSerializer
 
-class ScoreModel(nn.Module):
-    def __init__(self):
-        super().__init__()
-        self.net = nn.Sequential(
-            nn.Linear(8, 16),
-            nn.ReLU(),
-            nn.Linear(16, 8),
-            nn.ReLU(),
-            nn.Linear(8, 1),
-            nn.Sigmoid()
-        )
+from ml_model.models.load_latest_model import load_latest_model
 
-    def forward(self, x):
-        return self.net(x)
-
-# Cargar modelo
-model_path = os.path.join(settings.BASE_DIR, "models", "score_model.pth")
-model = ScoreModel()
-model.load_state_dict(torch.load(model_path))
-model.eval()
+model = load_latest_model()
 
 def predict_score(user_weights, borough_features):
     with torch.no_grad():
@@ -96,7 +78,6 @@ class SaveUserAnswersOnlyView(APIView):
         )
 
         return Response({"status": "answers saved"}, status=201)
-
 
 class SaveUserFeedbackView(APIView):
     permission_classes = [IsAuthenticated]

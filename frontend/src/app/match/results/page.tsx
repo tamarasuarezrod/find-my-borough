@@ -14,6 +14,8 @@ import { useBoroughsContext } from '@/context/boroughs-context'
 import FeedbackButtons from '@/components/feedback-buttons'
 import { useSendFeedback } from '@/services/send-feedback'
 import Image from 'next/image'
+import { Loader } from '@/components/loader'
+import toast from 'react-hot-toast'
 
 type Recommendation = {
   borough: string
@@ -29,7 +31,7 @@ export default function ResultsPage() {
   const [localVotes, setLocalVotes] = useState<Record<string, boolean>>({})
 
   const { boroughs } = useBoroughsContext()
-  const { mutateAsync: sendFeedbackMutation } = useSendFeedback()
+  const { mutateAsync: sendFeedbackMutation, isPending } = useSendFeedback()
 
   useEffect(() => {
     const stored = sessionStorage.getItem('recommendations')
@@ -42,10 +44,17 @@ export default function ResultsPage() {
 
   const sendFeedback = async (borough: string, feedback: string) => {
     try {
-      await sendFeedbackMutation({
-        borough,
-        feedback: feedback === 'like',
-      })
+      await sendFeedbackMutation(
+        {
+          borough,
+          feedback: feedback === 'like',
+        },
+        {
+          onSuccess: () => {
+            toast.success('Thank you for your feedback!')
+          },
+        },
+      )
       setLocalVotes((prev) => ({
         ...prev,
         [borough]: feedback === 'like',
@@ -70,8 +79,13 @@ export default function ResultsPage() {
 
   return (
     <div className="mx-auto max-w-7xl px-6 py-10">
-      <h1 className="mb-10 text-3xl font-bold">Your Top Borough Matches</h1>
+      {isPending && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-zinc-900/70">
+          <Loader />
+        </div>
+      )}
 
+      <h1 className="mb-10 text-3xl font-bold">Your Top Borough Matches</h1>
       {top && topBorough && (
         <>
           <Link
@@ -97,7 +111,7 @@ export default function ResultsPage() {
               <p className="mb-4 text-gray-300">
                 This borough matches{' '}
                 <span className="font-semibold text-green-400">
-                  {(top.score * 100).toFixed(1)}%
+                  {(top.score * 100).toFixed(0)}%
                 </span>{' '}
                 of your preferences.
               </p>

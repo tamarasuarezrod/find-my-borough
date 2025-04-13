@@ -5,8 +5,6 @@ root_dir = Path(__file__).resolve().parent.parent
 sys.path.append(str(root_dir))
 
 from data_cleaning import rent, crime, age, zone, merge_and_normalize
-# from data_generation.generate_synthetic_data import generate_synthetic_training_data
-# from model_training.train_model import train_model
 
 def run_pipeline():
     print("🚀 Starting pipeline...")
@@ -23,12 +21,6 @@ def run_pipeline():
     )
     df_final.to_csv("data/clean/borough_features.csv", index=False)
     print("✅ Cleaned and merged borough features saved.")
-
-    # Step 3: Generate synthetic training data
-    # generate_synthetic_training_data()
-    
-    # train_model()
-    print("✅ Model training completed.")
 
 if __name__ == "__main__":
     run_pipeline()

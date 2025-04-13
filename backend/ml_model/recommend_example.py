@@ -1,26 +1,14 @@
+import sys
+import os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
 import torch
-import torch.nn as nn
 import pandas as pd
 import numpy as np
 
-class ScoreModel(nn.Module):
-    def __init__(self):
-        super().__init__()
-        self.net = nn.Sequential(
-            nn.Linear(8, 16),
-            nn.ReLU(),
-            nn.Linear(16, 8),
-            nn.ReLU(),
-            nn.Linear(8, 1),
-            nn.Sigmoid()
-        )
+from ml_model.models.load_latest_model import load_latest_model
 
-    def forward(self, x):
-        return self.net(x)
-
-model = ScoreModel()
-model.load_state_dict(torch.load("models/score_model.pth"))
-model.eval()
+model = load_latest_model()
 
 # Prediction function
 def predict_score(budget_weight, safety_weight, youth_weight, centrality_weight,
@@ -30,6 +18,7 @@ def predict_score(budget_weight, safety_weight, youth_weight, centrality_weight,
                            norm_rent, norm_crime, norm_youth, norm_centrality]], dtype=torch.float32)
         return model(x).item()
 
+# Load borough features
 df = pd.read_csv("data/clean/borough_features.csv")
 
 def recommend_top_n_boroughs(budget_weight, safety_weight, youth_weight, centrality_weight, top_n=5):
