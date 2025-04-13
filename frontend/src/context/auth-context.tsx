@@ -1,9 +1,9 @@
 'use client'
 
+import { showErrorToast } from '@/lib/utils'
 import { useLoginToBackend } from '@/services/authenticate'
 import { signIn, signOut, useSession } from 'next-auth/react'
 import { createContext, useContext, useEffect, useRef, useState } from 'react'
-import toast from 'react-hot-toast'
 
 type AuthContextType = {
   isAuthenticated: boolean
@@ -45,7 +45,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             setIsAuthenticated(true)
           },
           onError: () => {
-            toast.error('There was an error logging in. Please try again.')
+            showErrorToast('There was an error logging in. Please try again.')
           },
         })
       }

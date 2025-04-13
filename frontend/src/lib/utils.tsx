@@ -1,3 +1,5 @@
+'use client'
+
 import {
   ArrowUp,
   ArrowDown,
@@ -7,7 +9,9 @@ import {
   PartyPopper,
   PoundSterling,
   MapPinned,
+  X,
 } from 'lucide-react'
+import toast from 'react-hot-toast'
 
 export function toTitleCase(str: string): string {
   return str.replace(/\b\w/g, (char) => char.toUpperCase())
@@ -109,4 +113,21 @@ export function getCentralityIndicator(score: number | undefined) {
       label: 'Outer',
     }
   }
+}
+
+export const showErrorToast = (message: string) => {
+  toast.custom((t) => (
+    <div className="flex w-[300px] items-center justify-between gap-4 rounded-lg bg-red-500 px-4 py-2 text-sm text-white shadow-lg">
+      <span>{message}</span>
+      <button
+        onClick={() => {
+          console.log('dddd')
+          toast.dismiss(t.id)
+        }}
+        className="hover:opacity-70"
+      >
+        <X className="h-4 w-4" />
+      </button>
+    </div>
+  ))
 }
