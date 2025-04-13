@@ -1,6 +1,6 @@
 'use client'
 
-import { Check, X } from 'lucide-react'
+import { Check } from 'lucide-react'
 import { Toaster } from 'react-hot-toast'
 
 export default function ToastProvider() {
@@ -9,6 +9,7 @@ export default function ToastProvider() {
       position="top-right"
       toastOptions={{
         duration: 3000,
+        removeDelay: 0,
         style: {
           background: '#18181b',
           color: '#fff',
@@ -29,19 +30,9 @@ export default function ToastProvider() {
             boxShadow: '0 4px 16px rgba(16, 185, 129, 0.4)',
           },
         },
-        error: {
-          icon: <X className="h-4 w-4 text-white" />,
-          iconTheme: {
-            primary: '#ef4444',
-            secondary: '#18181b',
-          },
-          style: {
-            background: '#ef4444',
-            color: '#fff',
-            boxShadow: '0 4px 16px rgba(239, 68, 68, 0.4)',
-          },
-        },
       }}
     />
   )
 }
+
+// For an error toast please use the one in utils folder

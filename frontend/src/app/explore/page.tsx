@@ -1,13 +1,19 @@
 'use client'
 
 import BoroughCard from '@/components/borough-card'
+import { Loader } from '@/components/loader'
 import { useBoroughsContext } from '@/context/boroughs-context'
 
 export default function ExplorePage() {
   const { boroughs, loading } = useBoroughsContext()
 
   if (loading) {
-    return <div className="text-center text-gray-400">Loading boroughs...</div>
+    return (
+      <div className="mt-8 flex items-center justify-center gap-3 text-gray-400">
+        <span>Loading boroughs...</span>
+        <Loader />
+      </div>
+    )
   }
 
   return (
