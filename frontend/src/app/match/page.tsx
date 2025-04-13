@@ -5,7 +5,6 @@ import { useRouter } from 'next/navigation'
 import { useRecommendation } from '@/services/get-recommendation'
 import { useSaveUserAnswers } from '@/services/save-answers'
 import { MatchQuestion, useMatchQuestions } from '@/services/get-questions'
-import { useSession } from 'next-auth/react'
 import LoginModal from '@/components/login-modal'
 import { UserAnswers } from '@/types/borough'
 import { showErrorToast } from '@/lib/utils'
@@ -13,7 +12,6 @@ import { Loader } from '@/components/loader'
 import { useAuth } from '@/context/auth-context'
 
 export default function MatchPage() {
-  const { status } = useSession()
   const router = useRouter()
   const [answers, setAnswers] = useState<
     Record<string, number | string | boolean>
