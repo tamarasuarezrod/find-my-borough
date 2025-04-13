@@ -11,18 +11,28 @@ import {
 } from '@/lib/utils'
 import { useBoroughBySlug } from '@/services/get-borough-detail'
 import CommunityRatings from './community-ratings'
+import { Loader } from '@/components/loader'
 
 export default function BoroughDetailPage() {
   const { slug } = useParams()
-  const { data: borough, isLoading, isError } = useBoroughBySlug(slug as string)
+  const {
+    data: borough,
+    isLoading: isLoadingBorough,
+    isError,
+  } = useBoroughBySlug(slug as string)
 
   const rent = getRentIndicator(borough?.norm_rent)
   const crime = getCrimeIndicator(borough?.norm_crime)
   const youth = getYouthIndicator(borough?.norm_youth)
   const centrality = getCentralityIndicator(borough?.norm_centrality)
 
-  if (isLoading) {
-    return <div className="text-center text-gray-400">Loading borough...</div>
+  if (isLoadingBorough) {
+    return (
+      <div className="mt-8 flex items-center justify-center gap-3 text-gray-400">
+        <span>Loading borough...</span>
+        <Loader />
+      </div>
+    )
   }
 
   if (isError || !borough) {

@@ -33,9 +33,7 @@ export function BoroughsProvider({ children }: { children: ReactNode }) {
         const data = await getBoroughs()
         setBoroughs(data)
       } catch {
-        toast.error('Please answer at least 4 questions before continuing', {
-          duration: 4000,
-        })
+        toast.error('There was an error fetching boroughs.')
       } finally {
         setLoading(false)
       }

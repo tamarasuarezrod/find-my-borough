@@ -8,7 +8,7 @@ import {
   useCommunityScores,
   useSubmitCommunityRatings,
 } from '@/services/community-rating'
-import { Score } from '@/types/borough'
+import { BoroughScore, Score } from '@/types/borough'
 
 import {
   Users,
@@ -22,6 +22,7 @@ import {
   Smile,
   Sprout,
 } from 'lucide-react'
+import { Loader } from '@/components/loader'
 
 type CommunityRatingsProps = {
   boroughSlug: string
@@ -44,14 +45,18 @@ export default function CommunityRatings({
   boroughSlug,
 }: CommunityRatingsProps) {
   const { status } = useSession()
-  const { data: scores, refetch } = useCommunityScores(boroughSlug) as {
-    data: Score[] | undefined
-    refetch: () => void
-  }
-  const { mutateAsync: submitRatings } = useSubmitCommunityRatings()
+  const {
+    data: scores,
+    refetch,
+    isLoading: isLoadingBoroughScores,
+  } = useCommunityScores(boroughSlug as string)
+  const { mutateAsync: submitRatings, isPending: isSendingScore } =
+    useSubmitCommunityRatings()
 
   const [isVoting, setIsVoting] = useState(false)
-  const [votes, setVotes] = useState<Record<string, number>>({})
+  const [votes, setVotes] = useState<BoroughScore['ratings']>({})
+
+  const isLoading = isLoadingBoroughScores || isSendingScore
 
   const handleVote = (featureId: string, score: number) => {
     setVotes((prev) => ({ ...prev, [featureId]: score }))
@@ -83,8 +88,9 @@ export default function CommunityRatings({
 
   return (
     <div className="mt-12">
-      <h2 className="mb-4 text-xl font-semibold text-white">
+      <h2 className="mb-4 flex items-center gap-3 text-xl font-semibold text-white">
         What people are saying
+        {isLoading && <Loader />}
       </h2>
 
       <div className="grid grid-cols-1 gap-y-6 text-sm text-white sm:grid-cols-3 sm:gap-x-4">
@@ -100,7 +106,7 @@ export default function CommunityRatings({
               </p>
               <CircleRating
                 score={score}
-                editable={isVoting}
+                editable={isVoting && !isLoading}
                 onChange={(val) => handleVote(feature, val)}
               />
             </div>
@@ -108,20 +114,25 @@ export default function CommunityRatings({
         })}
       </div>
 
-      <div className="mt-6 flex justify-end">
-        {isVoting ? (
-          <button onClick={submit} className="text-sm text-green-400 underline">
-            Submit votes
-          </button>
-        ) : (
-          <button
-            onClick={startVoting}
-            className="text-sm text-gray-400 underline"
-          >
-            Add your vote
-          </button>
-        )}
-      </div>
+      {!isLoading && (
+        <div className="mt-6 flex justify-end">
+          {isVoting ? (
+            <button
+              onClick={submit}
+              className="text-sm text-green-400 underline"
+            >
+              Submit votes
+            </button>
+          ) : (
+            <button
+              onClick={startVoting}
+              className="text-sm text-gray-400 underline"
+            >
+              Add your vote
+            </button>
+          )}
+        </div>
+      )}
     </div>
   )
 }

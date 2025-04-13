@@ -1,15 +1,10 @@
 import { api } from '@/lib/axios'
+import { BoroughScore, Score } from '@/types/borough'
 import { useQuery, useMutation } from '@tanstack/react-query'
 
 export const useSubmitCommunityRatings = () =>
   useMutation({
-    mutationFn: async ({
-      borough,
-      ratings,
-    }: {
-      borough: string
-      ratings: Record<string, number>
-    }) => {
+    mutationFn: async ({ borough, ratings }: BoroughScore) => {
       const res = await api.post('/boroughs/community/submit/', {
         borough,
         ratings: Object.entries(ratings).map(([feature, score]) => ({
@@ -21,7 +16,7 @@ export const useSubmitCommunityRatings = () =>
   })
 
 export const useCommunityScores = (slug: string) =>
-  useQuery({
+  useQuery<Score[]>({
     queryKey: ['community-scores', slug],
     queryFn: async () => {
       const res = await api.get(`/boroughs/community/scores/${slug}/`)

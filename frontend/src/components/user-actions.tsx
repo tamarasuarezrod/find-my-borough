@@ -3,29 +3,14 @@
 import { useSession } from 'next-auth/react'
 import { useState, useEffect, useRef } from 'react'
 import Image from 'next/image'
-import { useGoogleLogin } from '@/services/post-google-login'
-import { loginWithGoogle, logoutUser } from '@/lib/auth'
 import { User } from 'lucide-react'
+import { useAuth } from '@/context/auth-context'
 
 export default function UserActions() {
   const { data: session, status } = useSession()
   const [menuOpen, setMenuOpen] = useState(false)
   const menuRef = useRef<HTMLDivElement>(null)
-  const { mutateAsync: loginToBackend } = useGoogleLogin()
-
-  useEffect(() => {
-    const sync = async () => {
-      if (session?.id_token && !localStorage.getItem('access_token')) {
-        try {
-          await loginToBackend(session.id_token)
-        } catch (err) {
-          console.error('Sync failed', err)
-        }
-      }
-    }
-
-    sync()
-  }, [session?.id_token, loginToBackend])
+  const { isAuthenticated, loginWithGoogle, logout, isLoadingLogin } = useAuth()
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -40,7 +25,7 @@ export default function UserActions() {
 
   if (status === 'loading') return null
 
-  if (!session) {
+  if (!isAuthenticated && !isLoadingLogin) {
     return (
       <button
         onClick={loginWithGoogle}
@@ -57,7 +42,7 @@ export default function UserActions() {
         onClick={() => setMenuOpen((prev) => !prev)}
         className="ml-4 flex h-8 w-8 items-center justify-center overflow-hidden rounded-full border-2 border-white transition hover:scale-105"
       >
-        {session.user?.image ? (
+        {session?.user?.image ? (
           <Image
             src={session.user.image}
             alt="Profile"
@@ -73,7 +58,7 @@ export default function UserActions() {
       {menuOpen && (
         <div className="absolute right-0 z-10 mt-2 w-32 rounded-md bg-zinc-800 p-2 shadow-lg">
           <button
-            onClick={logoutUser}
+            onClick={logout}
             className="w-full rounded px-3 py-2 text-left text-sm hover:bg-zinc-700"
           >
             Logout

@@ -31,3 +31,8 @@ export type Score = {
   label: string
   score: number
 }
+
+export type BoroughScore = {
+  borough: string
+  ratings: Record<string, number>
+}

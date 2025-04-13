@@ -5,17 +5,7 @@ import BoroughCard from '@/components/borough-card'
 import { useBoroughs } from '@/services/get-boroughs'
 
 export default function HomePage() {
-  const { data: boroughs, isLoading, isError } = useBoroughs()
-
-  if (isLoading) {
-    return <div className="text-center text-gray-400">Loading boroughs...</div>
-  }
-
-  if (isError || !boroughs) {
-    return (
-      <div className="text-center text-red-400">Failed to load boroughs.</div>
-    )
-  }
+  const { data: boroughs } = useBoroughs()
 
   return (
     <div className="text-center">
@@ -50,7 +40,7 @@ export default function HomePage() {
       {
         <div className="grid grid-cols-1 gap-6 px-6 py-10 sm:grid-cols-3">
           {boroughs
-            .filter((b) =>
+            ?.filter((b) =>
               ['camden', 'westminster', 'hackney'].includes(b.slug),
             )
             .map((borough) => (

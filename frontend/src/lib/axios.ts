@@ -1,5 +1,28 @@
 import axios from 'axios'
-import { refreshAccessToken } from './auth'
+import { signOut } from 'next-auth/react'
+
+const refreshAccessToken = async (): Promise<string | null> => {
+  const refresh = localStorage.getItem('refresh_token')
+  if (!refresh) return null
+
+  try {
+    const res = await axios.post(
+      `${process.env.NEXT_PUBLIC_API_URL}/auth/token/refresh/`,
+      {
+        refresh,
+      },
+    )
+
+    const newAccess = res.data.access
+    localStorage.setItem('access_token', newAccess)
+    return newAccess
+  } catch {
+    localStorage.removeItem('access_token')
+    localStorage.removeItem('refresh_token')
+    signOut({ redirect: false })
+    return null
+  }
+}
 
 export const api = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL,

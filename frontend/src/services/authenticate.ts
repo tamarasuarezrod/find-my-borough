@@ -26,3 +26,17 @@ export const useGoogleLogin = () => {
     mutationFn: postGoogleLogin,
   })
 }
+
+export const useLoginToBackend = () => {
+  return useMutation({
+    mutationFn: async (id_token: string) => {
+      const res = await api.post('/auth/google/', { token: id_token })
+      const { access, refresh } = res.data
+
+      localStorage.setItem('access_token', access)
+      localStorage.setItem('refresh_token', refresh)
+
+      return res.data
+    },
+  })
+}
