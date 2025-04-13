@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useRecommendation } from '@/services/get-recommendation'
 import { useSaveUserAnswers } from '@/services/save-answers'
@@ -9,6 +9,8 @@ import { useSession } from 'next-auth/react'
 import LoginModal from '@/components/login-modal'
 import { UserAnswers } from '@/types/borough'
 import { showErrorToast } from '@/lib/utils'
+import { Loader } from '@/components/loader'
+import { useAuth } from '@/context/auth-context'
 
 export default function MatchPage() {
   const { status } = useSession()
@@ -17,17 +19,13 @@ export default function MatchPage() {
     Record<string, number | string | boolean>
   >({})
   const [error, setError] = useState<string | null>(null)
-  const [showLoginModal, setShowLoginModal] = useState(false)
 
-  const { mutateAsync: fetchRecommendation } = useRecommendation()
-  const saveAnswers = useSaveUserAnswers()
+  const { mutateAsync: fetchRecommendation, isPending: isLoadingRec } =
+    useRecommendation()
+  const { mutateAsync: saveAnswers, isPending: isSavingAnswers } =
+    useSaveUserAnswers()
   const { data: questions, isLoading } = useMatchQuestions()
-
-  useEffect(() => {
-    if (status === 'unauthenticated') {
-      setShowLoginModal(true)
-    }
-  }, [status])
+  const { isAuthenticated } = useAuth()
 
   const handleSelect = (
     questionId: string,
@@ -45,31 +43,37 @@ export default function MatchPage() {
       return
     }
 
-    try {
-      if (status === 'authenticated') {
-        await saveAnswers.mutateAsync(answers)
-      }
-
-      const data = await fetchRecommendation(answers as UserAnswers)
-      sessionStorage.setItem('recommendations', JSON.stringify(data))
-      router.push('/match/results', { scroll: true })
-    } catch {
-      showErrorToast('Something went wrong')
-    }
+    saveAnswers(answers, {
+      onSuccess: () => {
+        fetchRecommendation(answers as UserAnswers, {
+          onSuccess: (data) => {
+            sessionStorage.setItem('recommendations', JSON.stringify(data))
+            router.push('/match/results', { scroll: true })
+          },
+          onError: () => {
+            showErrorToast('Something went wrong')
+          },
+        })
+      },
+    })
   }
 
   const closeModal = () => {
-    setShowLoginModal(false)
     router.push('/')
   }
 
   if (isLoading || !questions) {
-    return <div className="text-center text-gray-400">Loading questions...</div>
+    return (
+      <div className="mt-8 flex items-center justify-center gap-3 text-gray-400">
+        <span>Loading questions..</span>
+        <Loader />
+      </div>
+    )
   }
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-10">
-      {showLoginModal && <LoginModal onClose={closeModal} />}
+      {!isAuthenticated && <LoginModal onClose={closeModal} />}
 
       <h1 className="mb-2 text-center text-3xl font-semibold">
         Find Your Match
@@ -106,12 +110,16 @@ export default function MatchPage() {
         </div>
 
         <div className="mt-10 flex justify-center">
-          <button
-            onClick={handleSubmit}
-            className="rounded-full bg-white px-8 py-3 font-medium text-black shadow transition hover:scale-105"
-          >
-            Find my match →
-          </button>
+          {isLoadingRec || isSavingAnswers ? (
+            <Loader />
+          ) : (
+            <button
+              onClick={handleSubmit}
+              className="rounded-full bg-white px-8 py-3 font-medium text-black shadow transition hover:scale-105"
+            >
+              Find my match →
+            </button>
+          )}
         </div>
       </div>
     </div>
