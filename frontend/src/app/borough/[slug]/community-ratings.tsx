@@ -8,7 +8,7 @@ import {
   useCommunityScores,
   useSubmitCommunityRatings,
 } from '@/services/community-rating'
-import { BoroughScore, Score } from '@/types/borough'
+import { BoroughScore } from '@/types/borough'
 
 import {
   Users,
@@ -68,10 +68,7 @@ export default function CommunityRatings({
       showErrorToast("Please log in to vote, we'd love to hear your opinion!")
     } else {
       setIsVoting(true)
-      const defaultVotes = Object.fromEntries(
-        (scores || []).map(({ feature }: Score) => [feature, 0]),
-      )
-      setVotes(defaultVotes)
+      setVotes({})
     }
   }
 
