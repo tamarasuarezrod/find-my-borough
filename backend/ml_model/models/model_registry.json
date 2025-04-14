@@ -10,5 +10,17 @@
       "hidden_dim_2": 32.0
     },
     "notes": "Retrained with best BO params"
+  },
+  {
+    "version": "v2",
+    "filename": "score_model_v2_2025-04-14.pth",
+    "date": "2025-04-14",
+    "val_loss": 0.33736536818832974,
+    "hyperparameters": {
+      "lr": 0.004435068973219237,
+      "hidden_dim_1": 44.0,
+      "hidden_dim_2": 8.0
+    },
+    "notes": "Retrained with new features current_situation and stay_duration"
   }
 ]

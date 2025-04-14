@@ -1,5 +1,3 @@
-# seeds/seed_borough_images.py
-
 from borough.models import Borough
 
 # Slug → image path (relative to Cloudinary)
