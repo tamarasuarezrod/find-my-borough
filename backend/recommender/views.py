@@ -1,31 +1,34 @@
 import os
-import torch
 
+import torch
 from django.conf import settings
+from rest_framework import status
 from rest_framework.decorators import api_view
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework.permissions import IsAuthenticated
-from rest_framework import status
 
 from borough.models import Borough
+from ml_model.models.load_latest_model import load_latest_model
+
 from .models import MatchQuestion, UserMatchAnswerSet, UserMatchFeedback
 from .serializers import MatchQuestionSerializer
-
-from ml_model.models.load_latest_model import load_latest_model
 
 model = load_latest_model()
 
 CURRENT_SITUATION_OPTIONS = ["student", "young_professional", "professional", "other"]
 STAY_DURATION_OPTIONS = ["short_term", "medium_term", "long_term"]
 
+
 def encode_one_hot(value, options):
     return [1.0 if value == opt else 0.0 for opt in options]
+
 
 def predict_score(user_weights, borough_features):
     with torch.no_grad():
         x = torch.tensor([user_weights + borough_features], dtype=torch.float32)
         return model(x).item()
+
 
 def get_recommendations(user_preferences, top_n=4):
     weights = [
@@ -45,7 +48,11 @@ def get_recommendations(user_preferences, top_n=4):
     full_input = weights + situation_encoding + stay_encoding
 
     recommendations = []
-    boroughs = Borough.objects.exclude(norm_rent__isnull=True).exclude(norm_crime__isnull=True).exclude(norm_youth__isnull=True)
+    boroughs = (
+        Borough.objects.exclude(norm_rent__isnull=True)
+        .exclude(norm_crime__isnull=True)
+        .exclude(norm_youth__isnull=True)
+    )
 
     for b in boroughs:
         borough_features = [
@@ -57,23 +64,27 @@ def get_recommendations(user_preferences, top_n=4):
 
         score = predict_score(full_input, borough_features)
 
-        recommendations.append({
-            "borough": b.name.lower(),
-            "score": round(score, 4),
-            "norm_rent": round(b.norm_rent, 2),
-            "norm_crime": round(b.norm_crime, 2),
-            "norm_youth": round(b.norm_youth, 2),
-            "norm_centrality": round(b.norm_centrality, 2),
-        })
+        recommendations.append(
+            {
+                "borough": b.name.lower(),
+                "score": round(score, 4),
+                "norm_rent": round(b.norm_rent, 2),
+                "norm_crime": round(b.norm_crime, 2),
+                "norm_youth": round(b.norm_youth, 2),
+                "norm_centrality": round(b.norm_centrality, 2),
+            }
+        )
 
     recommendations.sort(key=lambda x: x["score"], reverse=True)
     return recommendations[:top_n]
+
 
 @api_view(["POST"])
 def recommend_boroughs(request):
     user_preferences = request.data
     recommendations = get_recommendations(user_preferences)
     return Response(recommendations)
+
 
 class SaveUserAnswersOnlyView(APIView):
     permission_classes = [IsAuthenticated]
@@ -87,12 +98,11 @@ class SaveUserAnswersOnlyView(APIView):
 
         answer_hash = UserMatchAnswerSet.calculate_hash(answers)
         UserMatchAnswerSet.objects.get_or_create(
-            user=user,
-            hash=answer_hash,
-            defaults={"answers": answers}
+            user=user, hash=answer_hash, defaults={"answers": answers}
         )
 
         return Response({"status": "answers saved"}, status=201)
+
 
 class SaveUserFeedbackView(APIView):
     permission_classes = [IsAuthenticated]
@@ -111,10 +121,7 @@ class SaveUserFeedbackView(APIView):
             return Response({"error": "Borough not found"}, status=404)
 
         latest_answer_set = (
-            UserMatchAnswerSet.objects
-            .filter(user=user)
-            .order_by('-created_at')
-            .first()
+            UserMatchAnswerSet.objects.filter(user=user).order_by("-created_at").first()
         )
 
         if not latest_answer_set:
@@ -123,7 +130,7 @@ class SaveUserFeedbackView(APIView):
         feedback, created = UserMatchFeedback.objects.get_or_create(
             answer_set=latest_answer_set,
             borough=borough,
-            defaults={"feedback": feedback_value}
+            defaults={"feedback": feedback_value},
         )
 
         if not created:
@@ -135,8 +142,9 @@ class SaveUserFeedbackView(APIView):
 
         return Response({"status": "created"}, status=201)
 
+
 class MatchQuestionListView(APIView):
     def get(self, request):
-        questions = MatchQuestion.objects.prefetch_related('options').all()
+        questions = MatchQuestion.objects.prefetch_related("options").all()
         serializer = MatchQuestionSerializer(questions, many=True)
         return Response(serializer.data)

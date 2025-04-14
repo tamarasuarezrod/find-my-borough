@@ -28,7 +28,7 @@ image_paths = {
     "newham": "boroughs/newham_masuf6",
     "lewisham": "boroughs/lewisham_vzqjmi",
     "barking-and-dagenham": "barking_and_dagenham_pxbcs1",
-    "hillingdon": "hillingdon_cmpg91"
+    "hillingdon": "hillingdon_cmpg91",
 }
 
 BASE_URL = "https://res.cloudinary.com/djmajnlwm/image/upload/v1"

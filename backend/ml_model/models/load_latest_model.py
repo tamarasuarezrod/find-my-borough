@@ -1,9 +1,11 @@
-import os
 import json
+import os
+
 import torch
 import torch.nn as nn
 
 from .model_architecture import ScoreModel
+
 
 def load_latest_model():
     """
