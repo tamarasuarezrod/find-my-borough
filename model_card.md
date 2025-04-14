@@ -3,7 +3,7 @@
 ## Model Description
 
 **Input:**  
-The model takes an 8-dimensional vector composed of:
+The model takes a **15-dimensional vector** composed of:
 
 - **User-defined preference weights:**
 
@@ -11,6 +11,18 @@ The model takes an 8-dimensional vector composed of:
   - `safety_weight`: how important safety (low crime) is to the user
   - `youth_weight`: preference for areas with younger population
   - `centrality_weight`: how much the user values proximity to central London
+
+- **One-hot encoded user context:**
+
+  - `current_situation`: one-hot encoded as:
+    - `situation_student`
+    - `situation_young_professional`
+    - `situation_professional`
+    - `situation_other`
+  - `stay_duration`: one-hot encoded as:
+    - `stay_short_term`
+    - `stay_medium_term`
+    - `stay_long_term`
 
 - **Borough-specific features:**
   - `norm_rent`: normalized rent value for the borough
@@ -24,34 +36,34 @@ A single float between 0 and 1 representing how suitable a given borough is for 
 **Model Architecture:**  
 A feedforward neural network implemented in PyTorch with the following structure:
 
-- Input layer: 8 features
-- Hidden layer 1: 15 units (ReLU)
-- Hidden layer 2: 32 units (ReLU)
+- Input layer: 15 features
+- Hidden layer 1: 44 units (ReLU)
+- Hidden layer 2: 8 units (ReLU)
 - Output layer: 1 unit (Sigmoid activation)
 
-Optimized using Binary Cross Entropy Loss and Adam optimizer. Final hyperparameters selected through Bayesian Optimization.
+Optimized using Binary Cross Entropy Loss and the Adam optimizer. Final hyperparameters were selected via Bayesian Optimization.
 
 ---
 
 ## Performance
 
-- **Validation loss:** 0.1672 (Binary Cross Entropy)
-- **Validation split:** 20% of a synthetic dataset with labeled scores
+- **Validation loss:** `0.3374` (Binary Cross Entropy)
+- **Validation split:** 20% of a synthetic dataset with binary feedback scores
 - **Optimization method:** Bayesian Optimization (`skopt`)
 - **Best hyperparameters:**
-  - Learning rate: `0.00806`
-  - Hidden layer sizes: `15`, `32`
-
-The model was retrained for 30 epochs using these hyperparameters before final evaluation and saving.
+  - Learning rate: `0.004435068973219237`
+  - Hidden layer sizes: `44`, `8`
+- **Model version:** `v2`
+- **Filename:** `score_model_v2_2025-04-14.pth`
 
 ---
 
 ## Limitations
 
-- The model was trained using real borough-level data combined with synthetic user preferences and feedback scores, meaning the area features are factual, but the training labels simulate expected behavior. The goal is for the platform to collect enough real user feedback over time to retrain and improve the model based on actual preferences and behaviors.
-- The model uses only a selected set of borough features (rent, crime rate, youth population, centrality). While these are relevant, it does not yet incorporate other potentially influential data like access to transport, schools, or green spaces.
-- Feature values are normalized to ensure consistent training and prediction behavior. However, predictions may slightly change if the dataset is updated and normalization parameters are recalculated.
-- City of London is the only borough with missing crime rate data, as it is policed by the City of London Police instead of the Metropolitan Police, which provided the crime data for all other boroughs. As a result, the model may produce less reliable recommendations for City of London. Integrating external data sources could improve coverage, but care must be taken to ensure the data is comparable and consistent with the existing dataset.
+- The model is trained on synthetic user feedback, which approximates how different user types might rank boroughs based on general assumptions. Actual user preferences may vary.
+- The model currently includes only a limited set of borough features. Important factors like access to transport, schools, healthcare, and green spaces are not yet included.
+- Scores may slightly shift if new borough-level data is added or normalization parameters are recalculated.
+- The **City of London** is missing crime data, which may affect prediction quality for that borough.
 
 ---
 

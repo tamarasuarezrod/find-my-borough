@@ -49,32 +49,38 @@ We combined multiple public datasets to describe each London borough, including:
 - **Age demographics** – Office for National Statistics (ONS)
 - **Transport zones** – Custom mapping based on TfL data
 
-These were merged and normalized into a final feature set per borough.  
-To simulate user preferences, we generated synthetic user profiles with weighted preferences and synthetic feedback scores to train the model in a controlled environment.
+These were merged and normalized into a final feature set per borough.
+To simulate user preferences, we generated synthetic user profiles with weighted preferences, contextual information (current_situation and stay_duration), and synthetic feedback scores to train the model in a controlled environment.
 
 See [data_sheet.md](./data_sheet.md) for full details.
 
 ## Model
 
-The recommendation system uses a feedforward neural network implemented in PyTorch. It predicts how suitable each borough is for a user based on their preference weights and borough-level features. We chose this model for its flexibility and ability to capture non-linear relationships between inputs.
+The recommendation system uses a feedforward neural network implemented in PyTorch. It predicts how suitable each borough is for a user based on their preference weights, contextual data, and borough-level features. We chose this model for its flexibility and ability to capture non-linear relationships between inputs.
 
-The model takes an 8-dimensional input vector (4 user-defined weights + 4 borough features) and outputs a score between 0 and 1 indicating suitability.
+The model takes a 15-dimensional input vector:
 
+- 4 borough features
+- 4 user-defined preference weights
+- 7 one-hot encoded features for current_situation and stay_duration
+
+It outputs a score between 0 and 1 indicating suitability.
 See [model_card.md](./model_card.md) for full details.
 
 ## Hyperparameter Optimization
 
 We used Bayesian Optimization (via `skopt`) to tune the model’s architecture and learning rate. Parameters explored included the number of hidden layers, units per layer, and learning rate. The best configuration found was:
 
-- Architecture: (8 → 15 → 32 → 1)
+- Architecture: (15 → 44 → 8 → 1)
 - Activation functions: ReLU (hidden layers), Sigmoid (output)
 - Optimizer: Adam
 - Loss function: Binary Cross Entropy
-- Learning rate: `0.00806`
+- Learning rate: 0.004435
 
 ## Results
 
-On the synthetic test set, the model achieved a validation loss of **0.1672 (Binary Cross Entropy)**. This indicates good consistency between predicted and actual synthetic feedback scores. While the training labels are simulated, the model shows strong potential to personalize borough recommendations based on user preferences.
+On the synthetic test set, the model achieved a validation loss of 0.337 (Binary Cross Entropy). This indicates good consistency between predicted and actual synthetic feedback scores. While the training labels are simulated, the model shows strong potential to personalize borough recommendations based on user preferences and context.
+As real users begin interacting with the platform and providing feedback, the model can be retrained to better reflect actual behavior, improving the quality and relevance of recommendations over time.
 
 ## Contact
 
