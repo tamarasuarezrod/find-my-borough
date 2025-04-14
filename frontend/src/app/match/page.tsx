@@ -23,7 +23,7 @@ export default function MatchPage() {
   const { mutateAsync: saveAnswers, isPending: isSavingAnswers } =
     useSaveUserAnswers()
   const { data: questions, isLoading } = useMatchQuestions()
-  const { isAuthenticated } = useAuth()
+  const { isAuthenticated, isLoadingLogin } = useAuth()
 
   const handleSelect = (
     questionId: string,
@@ -71,7 +71,14 @@ export default function MatchPage() {
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-10">
-      {!isAuthenticated && <LoginModal onClose={closeModal} />}
+      {!isAuthenticated &&
+        (isLoadingLogin ? (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-zinc-900/70">
+            <Loader />
+          </div>
+        ) : (
+          <LoginModal onClose={closeModal} />
+        ))}
 
       <h1 className="mb-2 text-center text-3xl font-semibold">
         Find Your Match

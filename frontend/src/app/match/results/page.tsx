@@ -71,7 +71,7 @@ export default function ResultsPage() {
   const topBorough = boroughs.find(
     (b) => b.name.toLowerCase() === top?.borough.toLowerCase(),
   )
-  const showScore = process.env.NODE_ENV === 'development' && top?.score
+  const showScore = process.env.NODE_ENV === 'development'
 
   const rent = getRentIndicator(top?.norm_rent)
   const crime = getCrimeIndicator(top?.norm_crime)
@@ -109,7 +109,6 @@ export default function ResultsPage() {
               <h2 className="mb-3 text-3xl font-bold">
                 {toTitleCase(topBorough.name)}
               </h2>
-              {/* Show score only in dev env */}
               {showScore && (
                 <p className="mb-4 text-gray-300">
                   This borough matches{' '}

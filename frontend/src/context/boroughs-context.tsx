@@ -1,6 +1,5 @@
 'use client'
 
-import { showErrorToast } from '@/lib/utils'
 import { getBoroughs } from '@/services/get-boroughs'
 import { Borough } from '@/types/borough'
 import {
@@ -32,11 +31,8 @@ export function BoroughsProvider({ children }: { children: ReactNode }) {
       try {
         const data = await getBoroughs()
         setBoroughs(data)
-      } catch {
-        showErrorToast('There was an error fetching boroughs.')
-      } finally {
         setLoading(false)
-      }
+      } catch {}
     }
 
     fetchData()
