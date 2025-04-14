@@ -1,4 +1,5 @@
 import os
+import sys
 import warnings
 from pathlib import Path
 
@@ -73,6 +74,15 @@ WSGI_APPLICATION = "backend.wsgi.application"
 
 # Database configuration
 DATABASES = {"default": dj_database_url.config(default=config("DATABASE_URL"))}
+
+if "test" in sys.argv:
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": ":memory:",
+        }
+    }
+
 
 # Password validation
 AUTH_PASSWORD_VALIDATORS = [

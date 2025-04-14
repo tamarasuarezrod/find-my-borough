@@ -65,7 +65,7 @@ The model takes a 15-dimensional input vector:
 - 7 one-hot encoded features for current_situation and stay_duration
 
 It outputs a score between 0 and 1 indicating suitability.
-See [model_card.md](./model_card.md) for full details, or [train_model.ipynb](./backend/ml_model/notebooks/train_model.ipynb) to view the training notebook..
+See [model_card.md](./model_card.md) for full details, or [train_model.ipynb](./backend/ml_model/notebooks/train_model.ipynb) to view the training notebook.
 
 ## Hyperparameter Optimization
 

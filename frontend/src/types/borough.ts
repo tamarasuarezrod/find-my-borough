@@ -1,6 +1,7 @@
 export type Borough = {
   name: string
   slug: string
+  description?: string
   image: string
   norm_rent?: number
   norm_crime?: number
