@@ -34,11 +34,12 @@ class CommunityRatingPostSerializer(serializers.Serializer):
 
         for item in ratings:
             for feature_id, score in item.items():
-                feature = CommunityFeature.objects.get(id=feature_id)
-                obj, _ = CommunityRating.objects.update_or_create(
-                    user=user, borough=borough, feature=feature,
-                    defaults={'score': score}
-                )
-                objects.append(obj)
+                if score > 0:
+                    feature = CommunityFeature.objects.get(id=feature_id)
+                    obj, _ = CommunityRating.objects.update_or_create(
+                        user=user, borough=borough, feature=feature,
+                        defaults={'score': score}
+                    )
+                    objects.append(obj)
 
         return objects

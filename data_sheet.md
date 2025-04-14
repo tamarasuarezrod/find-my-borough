@@ -47,18 +47,24 @@ Several preprocessing steps were required to consolidate and normalize borough-l
 
 - **Filtering valid boroughs:** A predefined list of 33 London boroughs was used to remove irrelevant or malformed entries from the source files.
 
-- **Rent data processing:**
-
-  - Filtered to only include rows labeled "All categories" (all property types).
-  - Median rent values were aggregated per borough using the median across periods.
-  - Values were normalized such that `1` indicates the most affordable borough.
-
 - **Crime data processing:**
 
   - Aggregated total notifiable offences from March 2021 to February 2025.
   - Only rows marked as "Offences" were included.
+  - A logarithmic transformation (`log1p`) was applied to total crime values to reduce the effect of outliers.
+
+    - In particular, Westminster had an exceptionally high number of reported offences compared to other boroughs, which distorted min-max normalization and made relatively unsafe boroughs appear disproportionately safe.
+    - Applying a log transformation reduced this skew and produced a more realistic and comparable safety metric across boroughs.
+
   - Values were normalized so that higher values represent safer areas.
   - The borough **City of London** had no crime data available and was retained with a `null` value placeholder.
+
+- **Rent data processing:**
+
+  - Filtered to only include rows labeled "All categories" (all property types).
+  - Median rent values were aggregated per borough using the median across periods.
+  - A logarithmic transformation (`log1p`) was also applied to rent values before normalization, to reduce skew caused by extremely high-rent boroughs.
+  - Values were normalized such that `1` indicates the most affordable borough.
 
 - **Age population processing:**
 

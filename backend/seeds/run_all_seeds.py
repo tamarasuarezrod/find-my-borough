@@ -1,4 +1,4 @@
-# seeds/run_all_seeds.py
+# python manage.py shell < seeds/run_all_seeds.py
 
 exec(open("seeds/seed_borough_features.py").read())
 exec(open("seeds/seed_match_questions.py").read())
