@@ -16,6 +16,12 @@ from ml_model.models.load_latest_model import load_latest_model
 
 model = load_latest_model()
 
+CURRENT_SITUATION_OPTIONS = ["student", "young_professional", "professional", "other"]
+STAY_DURATION_OPTIONS = ["short_term", "medium_term", "long_term"]
+
+def encode_one_hot(value, options):
+    return [1.0 if value == opt else 0.0 for opt in options]
+
 def predict_score(user_weights, borough_features):
     with torch.no_grad():
         x = torch.tensor([user_weights + borough_features], dtype=torch.float32)
@@ -29,6 +35,15 @@ def get_recommendations(user_preferences, top_n=4):
         float(user_preferences.get("centrality_weight", 0) or 0),
     ]
 
+    situation_encoding = encode_one_hot(
+        user_preferences.get("current_situation", ""), CURRENT_SITUATION_OPTIONS
+    )
+    stay_encoding = encode_one_hot(
+        user_preferences.get("stay_duration", ""), STAY_DURATION_OPTIONS
+    )
+
+    full_input = weights + situation_encoding + stay_encoding
+
     recommendations = []
     boroughs = Borough.objects.exclude(norm_rent__isnull=True).exclude(norm_crime__isnull=True).exclude(norm_youth__isnull=True)
 
@@ -40,7 +55,7 @@ def get_recommendations(user_preferences, top_n=4):
             b.norm_centrality,
         ]
 
-        score = predict_score(weights, borough_features)
+        score = predict_score(full_input, borough_features)
 
         recommendations.append({
             "borough": b.name.lower(),

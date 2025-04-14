@@ -1,5 +1,7 @@
 from recommender.models import MatchQuestion, MatchOption
 
+MatchQuestion.objects.filter(id__in=["current_situation", "stay_duration", "is_student"]).delete()
+
 questions = [
     {
         "id": "budget_weight",
@@ -46,23 +48,22 @@ questions = [
         "title": "Duration",
         "description": "How long do you plan to stay?",
         "options": [
-            {"label": "Less than a year", "value": "short_term"},
-            {"label": "1–2 years", "value": "mid_term"},
-            {"label": "Longer than 2 years", "value": "long_term"},
-            {"label": "Not sure yet / Open to anything", "value": "unknown"},
-        ],
+            { "label": "Less than a year", "value": "short_term" },
+            { "label": "1–2 years", "value": "medium_term" },
+            { "label": "Longer than 2 years", "value": "long_term" }
+        ]
     },
     {
-        "id": "is_student",
+        "id": "current_situation",
         "title": "Current situation",
         "description": "What best describes your current situation?",
         "options": [
-            {"label": "I'm a student", "value": "student"},
-            {"label": "I'm a young professional", "value": "young-professional"},
-            {"label": "I’m relocating with family", "value": "family"},
-            {"label": "Other", "value": "other"},
-        ],
-    },
+            { "label": "I'm a student", "value": "student" },
+            { "label": "I'm a young professional", "value": "young_professional" },
+            { "label": "I'm a professional", "value": "professional" },
+            { "label": "Other", "value": "other" }
+        ]
+    }
 ]
 
 for q in questions:

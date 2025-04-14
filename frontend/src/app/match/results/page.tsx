@@ -71,6 +71,7 @@ export default function ResultsPage() {
   const topBorough = boroughs.find(
     (b) => b.name.toLowerCase() === top?.borough.toLowerCase(),
   )
+  const showScore = process.env.NODE_ENV === 'development' && top?.score
 
   const rent = getRentIndicator(top?.norm_rent)
   const crime = getCrimeIndicator(top?.norm_crime)
@@ -108,13 +109,16 @@ export default function ResultsPage() {
               <h2 className="mb-3 text-3xl font-bold">
                 {toTitleCase(topBorough.name)}
               </h2>
-              <p className="mb-4 text-gray-300">
-                This borough matches{' '}
-                <span className="font-semibold text-green-400">
-                  {(top.score * 100).toFixed(0)}%
-                </span>{' '}
-                of your preferences.
-              </p>
+              {/* Show score only in dev env */}
+              {showScore && (
+                <p className="mb-4 text-gray-300">
+                  This borough matches{' '}
+                  <span className="font-semibold text-green-400">
+                    {(top.score * 100).toFixed(0)}%
+                  </span>{' '}
+                  of your preferences.
+                </p>
+              )}
               <div className="mt-2 flex flex-wrap items-center gap-4 text-sm text-gray-400">
                 {centrality && (
                   <div className="flex gap-1">
@@ -179,7 +183,11 @@ export default function ResultsPage() {
                 selected={localVotes[details.slug]}
               />
               <BoroughCard
-                scoreLabel={`Score: ${(rec.score * 100).toFixed(0)}%`}
+                scoreLabel={
+                  showScore
+                    ? `Score: ${(rec.score * 100).toFixed(0)}%`
+                    : undefined
+                }
                 {...details}
               />
             </div>
