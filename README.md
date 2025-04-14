@@ -42,7 +42,7 @@ Finding a place to live in London can be overwhelming, especially for newcomers 
 
 ## Data
 
-We combined multiple public datasets to describe each London borough, including:
+Multiple public datasets were combined to describe each London borough, including:
 
 - **Rent prices** – London Datastore
 - **Crime statistics** – Metropolitan Police (2021–2025)
@@ -50,13 +50,13 @@ We combined multiple public datasets to describe each London borough, including:
 - **Transport zones** – Custom mapping based on TfL data
 
 These were merged and normalized into a final feature set per borough.
-To simulate user preferences, we generated synthetic user profiles with weighted preferences, contextual information (current_situation and stay_duration), and synthetic feedback scores to train the model in a controlled environment.
+To simulate user preferences, synthetic user profiles were generated with weighted preferences, contextual information (current_situation and stay_duration), and synthetic feedback scores to train the model in a controlled environment.
 
 See [data_sheet.md](./data_sheet.md) for full details.
 
 ## Model
 
-The recommendation system uses a feedforward neural network implemented in PyTorch. It predicts how suitable each borough is for a user based on their preference weights, contextual data, and borough-level features. We chose this model for its flexibility and ability to capture non-linear relationships between inputs.
+The recommendation system uses a feedforward neural network implemented in PyTorch. It predicts how suitable each borough is for a user based on their preference weights, contextual data, and borough-level features. This model was chosen for its flexibility and ability to capture non-linear relationships between inputs.
 
 The model takes a 15-dimensional input vector:
 
@@ -65,11 +65,11 @@ The model takes a 15-dimensional input vector:
 - 7 one-hot encoded features for current_situation and stay_duration
 
 It outputs a score between 0 and 1 indicating suitability.
-See [model_card.md](./model_card.md) for full details.
+See [model_card.md](./model_card.md) for full details, or [train_model.ipynb](./backend/ml_model/notebooks/train_model.ipynb) to view the training notebook..
 
 ## Hyperparameter Optimization
 
-We used Bayesian Optimization (via `skopt`) to tune the model’s architecture and learning rate. Parameters explored included the number of hidden layers, units per layer, and learning rate. The best configuration found was:
+Bayesian Optimization was used to tune the model’s architecture and learning rate. Parameters explored included the number of hidden layers, units per layer, and learning rate. The best configuration found was:
 
 - Architecture: (15 → 44 → 8 → 1)
 - Activation functions: ReLU (hidden layers), Sigmoid (output)
