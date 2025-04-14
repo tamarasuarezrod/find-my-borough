@@ -121,7 +121,6 @@ export const showErrorToast = (message: string) => {
       <span>{message}</span>
       <button
         onClick={() => {
-          console.log('dddd')
           toast.dismiss(t.id)
         }}
         className="hover:opacity-70"

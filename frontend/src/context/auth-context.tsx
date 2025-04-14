@@ -22,10 +22,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const { data: session } = useSession()
 
   useEffect(() => {
-    console.log(isAuthenticated)
-  }, [isAuthenticated])
-
-  useEffect(() => {
     const accessToken = localStorage.getItem('access_token')
     const refreshToken = localStorage.getItem('refresh_token')
 

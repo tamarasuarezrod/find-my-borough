@@ -1,3 +1,4 @@
+from decouple import config
 from django.contrib.auth import get_user_model
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -23,11 +24,12 @@ class GoogleLoginAPIView(APIView):
             idinfo = id_token.verify_oauth2_token(
                 token_id,
                 google_requests.Request(),
-                # Tu client ID de Google, opcional pero recomendable
-                # Si querés validar que venga de tu app:
-                # os.environ.get('GOOGLE_CLIENT_ID')
+                config('GOOGLE_CLIENT_ID'),
+                clock_skew_in_seconds=10
             )
-        except google.auth.exceptions.GoogleAuthError:
+            
+        except Exception as e:
+            print("Exception while verifying token:", str(e))
             return Response({'error': 'Invalid token'}, status=status.HTTP_400_BAD_REQUEST)
 
         email = idinfo.get('email')
