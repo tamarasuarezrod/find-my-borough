@@ -1,16 +1,18 @@
-import pandas as pd
-import numpy as np
 import os
+
+import numpy as np
+import pandas as pd
+
 
 def normalize_column(series, invert=False, log=False):
     """
     Normalizes a pandas Series using min-max scaling.
-    
+
     Args:
         series (pd.Series): The column to normalize.
         invert (bool): If True, higher original values become lower (1 - scaled).
         log (bool): If True, applies log1p transformation before normalization.
-        
+
     Returns:
         pd.Series: Normalized values between 0 and 1.
     """

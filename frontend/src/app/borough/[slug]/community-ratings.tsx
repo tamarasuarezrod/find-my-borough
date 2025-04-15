@@ -1,7 +1,6 @@
 'use client'
 
 import { useState } from 'react'
-import toast from 'react-hot-toast'
 import CircleRating from '@/components/circle-rating'
 import { useSession } from 'next-auth/react'
 import {
@@ -24,6 +23,7 @@ import {
 } from 'lucide-react'
 import { Loader } from '@/components/loader'
 import { showErrorToast } from '@/lib/utils'
+import toast from 'react-hot-toast'
 
 type CommunityRatingsProps = {
   boroughSlug: string
@@ -46,13 +46,19 @@ export default function CommunityRatings({
   boroughSlug,
 }: CommunityRatingsProps) {
   const { status } = useSession()
-  const {
-    data: scores,
-    refetch,
-    isLoading: isLoadingBoroughScores,
-  } = useCommunityScores(boroughSlug as string)
+  const { data: scores, isLoading: isLoadingBoroughScores } =
+    useCommunityScores(boroughSlug as string)
   const { mutateAsync: submitRatings, isPending: isSendingScore } =
-    useSubmitCommunityRatings()
+    useSubmitCommunityRatings({
+      onSuccess: () => {
+        toast.success('Thanks for your vote!')
+        setIsVoting(false)
+        setVotes({})
+      },
+      onError: () => {
+        showErrorToast('Failed to submit your vote')
+      },
+    })
 
   const [isVoting, setIsVoting] = useState(false)
   const [votes, setVotes] = useState<BoroughScore['ratings']>({})
@@ -73,24 +79,19 @@ export default function CommunityRatings({
   }
 
   const submit = async () => {
-    try {
-      await submitRatings({ borough: boroughSlug, ratings: votes })
-      toast.success('Thanks for your vote!')
-      setIsVoting(false)
-      setVotes({})
-      refetch()
-    } catch {
-      showErrorToast('Failed to submit your vote')
-    }
+    await submitRatings({ borough: boroughSlug, ratings: votes })
   }
 
   return (
     <div className="mt-12">
+      {isLoading && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-zinc-900/70">
+          <Loader />
+        </div>
+      )}
       <h2 className="mb-4 flex items-center gap-3 text-xl font-semibold text-white">
         What people are saying
-        {isLoading && <Loader />}
       </h2>
-
       <div className="grid grid-cols-1 gap-y-6 text-sm text-white sm:grid-cols-3 sm:gap-x-4">
         {(scores || []).map(({ label, feature }) => {
           const currentScore =

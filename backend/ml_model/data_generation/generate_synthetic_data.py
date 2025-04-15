@@ -1,18 +1,22 @@
-import pandas as pd
-import numpy as np
 import os
 import random
+
+import numpy as np
+import pandas as pd
 
 BASE_PATH = "ml_model/data/clean"
 CURRENT_SITUATION_OPTIONS = ["student", "young_professional", "professional", "other"]
 STAY_DURATION_OPTIONS = ["short_term", "medium_term", "long_term"]
 
+
 def encode_one_hot(value, options):
     return [1.0 if value == opt else 0.0 for opt in options]
+
 
 def normalize_weights(weights):
     total = sum(weights)
     return [w / total for w in weights]
+
 
 def create_user_profile(user_id, situation, duration):
     if situation == "student":
@@ -37,6 +41,7 @@ def create_user_profile(user_id, situation, duration):
         "current_situation": situation,
         "stay_duration": duration,
     }
+
 
 def generate_synthetic_training_data(n_users=100):
     df_boroughs = pd.read_csv(os.path.join(BASE_PATH, "borough_features.csv"))
@@ -67,10 +72,10 @@ def generate_synthetic_training_data(n_users=100):
         for _, row in df_boroughs.iterrows():
             # base weighted score
             base_score = (
-                b_weight * row["norm_rent"] +
-                s_weight * row["norm_crime"] +
-                y_weight * row["norm_youth"] +
-                c_weight * row["norm_centrality"]
+                b_weight * row["norm_rent"]
+                + s_weight * row["norm_crime"]
+                + y_weight * row["norm_youth"]
+                + c_weight * row["norm_centrality"]
             )
 
             bonus = 0.0
@@ -89,7 +94,16 @@ def generate_synthetic_training_data(n_users=100):
 
             raw_score = base_score + bonus
 
-            borough_scores.append((row["borough"], row["norm_rent"], row["norm_crime"], row["norm_youth"], row["norm_centrality"], raw_score))
+            borough_scores.append(
+                (
+                    row["borough"],
+                    row["norm_rent"],
+                    row["norm_crime"],
+                    row["norm_youth"],
+                    row["norm_centrality"],
+                    raw_score,
+                )
+            )
 
         borough_scores.sort(key=lambda x: x[5], reverse=True)
         n = 10
@@ -98,32 +112,74 @@ def generate_synthetic_training_data(n_users=100):
         bottom = borough_scores[-n:]
 
         for borough, rent, crime, youth, centrality, raw_score in top:
-            training_data.append([
-                uid, b_weight, s_weight, y_weight, c_weight,
-                *situation_encoding, *duration_encoding,
-                rent, crime, youth, centrality,
-                borough, raw_score, 1
-            ])
+            training_data.append(
+                [
+                    uid,
+                    b_weight,
+                    s_weight,
+                    y_weight,
+                    c_weight,
+                    *situation_encoding,
+                    *duration_encoding,
+                    rent,
+                    crime,
+                    youth,
+                    centrality,
+                    borough,
+                    raw_score,
+                    1,
+                ]
+            )
         for borough, rent, crime, youth, centrality, raw_score in bottom:
-            training_data.append([
-                uid, b_weight, s_weight, y_weight, c_weight,
-                *situation_encoding, *duration_encoding,
-                rent, crime, youth, centrality,
-                borough, raw_score, 0
-            ])
+            training_data.append(
+                [
+                    uid,
+                    b_weight,
+                    s_weight,
+                    y_weight,
+                    c_weight,
+                    *situation_encoding,
+                    *duration_encoding,
+                    rent,
+                    crime,
+                    youth,
+                    centrality,
+                    borough,
+                    raw_score,
+                    0,
+                ]
+            )
 
-    df_synth = pd.DataFrame(training_data, columns=[
-        "user_id", "budget_weight", "safety_weight", "youth_weight", "centrality_weight",
-        "situation_student", "situation_young_professional", "situation_professional", "situation_other",
-        "stay_short_term", "stay_medium_term", "stay_long_term",
-        "norm_rent", "norm_crime", "norm_youth", "norm_centrality",
-        "borough", "raw_score", "score"
-    ])
+    df_synth = pd.DataFrame(
+        training_data,
+        columns=[
+            "user_id",
+            "budget_weight",
+            "safety_weight",
+            "youth_weight",
+            "centrality_weight",
+            "situation_student",
+            "situation_young_professional",
+            "situation_professional",
+            "situation_other",
+            "stay_short_term",
+            "stay_medium_term",
+            "stay_long_term",
+            "norm_rent",
+            "norm_crime",
+            "norm_youth",
+            "norm_centrality",
+            "borough",
+            "raw_score",
+            "score",
+        ],
+    )
 
     output_path = os.path.join(BASE_PATH, "synthetic_training_data.csv")
     os.makedirs(BASE_PATH, exist_ok=True)
     df_synth.to_csv(output_path, index=False)
     print("✅ synthetic_training_data.csv generated with", len(df_synth), "rows")
+
 
 if __name__ == "__main__":
     generate_synthetic_training_data()

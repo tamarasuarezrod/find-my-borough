@@ -1,7 +1,6 @@
 'use client'
 
-import { useParams } from 'next/navigation'
-import Image from 'next/image'
+import { Loader } from '@/components/loader'
 import {
   getCentralityIndicator,
   getCrimeIndicator,
@@ -10,8 +9,9 @@ import {
   toTitleCase,
 } from '@/lib/utils'
 import { useBoroughBySlug } from '@/services/get-borough-detail'
+import Image from 'next/image'
+import { useParams } from 'next/navigation'
 import CommunityRatings from './community-ratings'
-import { Loader } from '@/components/loader'
 
 export default function BoroughDetailPage() {
   const { slug } = useParams()
@@ -51,15 +51,20 @@ export default function BoroughDetailPage() {
             fill
             className="object-cover"
           />
-          <div className="absolute inset-0 flex flex-col items-center justify-center bg-black bg-opacity-40 p-8">
+          <div className="absolute inset-0 flex flex-col items-center justify-center bg-black bg-opacity-60 p-8">
             <h1 className="break-words text-center text-2xl font-bold text-white sm:text-4xl md:text-5xl">
               {toTitleCase(borough.name)}
             </h1>
+            {borough.description && (
+              <p className="mt-2 max-w-2xl text-center text-sm text-white sm:text-base">
+                {borough.description}
+              </p>
+            )}
           </div>
         </div>
 
         {/* Indicators */}
-        <div className="relative z-50 -mt-10 grid grid-cols-2 gap-4 px-4 sm:flex sm:justify-center sm:gap-6">
+        <div className="relative z-50 -mt-7 grid grid-cols-2 gap-4 px-4 sm:flex sm:justify-center sm:gap-6">
           {centrality && (
             <div className="flex items-center justify-center gap-2 rounded-xl border border-gray-800 bg-[#111111] px-4 py-3 text-white shadow-md">
               <span className="flex items-center">{centrality.icon}</span>

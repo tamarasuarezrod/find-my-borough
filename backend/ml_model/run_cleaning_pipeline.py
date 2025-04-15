@@ -4,7 +4,8 @@ from pathlib import Path
 root_dir = Path(__file__).resolve().parent.parent
 sys.path.append(str(root_dir))
 
-from data_cleaning import rent, crime, age, zone, merge_and_normalize
+from data_cleaning import age, crime, merge_and_normalize, rent, zone
+
 
 def run_pipeline():
     print("🚀 Starting pipeline...")
@@ -21,6 +22,7 @@ def run_pipeline():
     )
     df_final.to_csv("data/clean/borough_features.csv", index=False)
     print("✅ Cleaned and merged borough features saved.")
+
 
 if __name__ == "__main__":
     run_pipeline()

@@ -1,5 +1,6 @@
 import pandas as pd
 
+
 def load_zone_data():
     borough_zone_mapping = {
         "barking and dagenham": 4,
@@ -37,10 +38,12 @@ def load_zone_data():
         "westminster": 1,
     }
 
-    df_zones = pd.DataFrame(list(borough_zone_mapping.items()), columns=["borough", "zone"])
+    df_zones = pd.DataFrame(
+        list(borough_zone_mapping.items()), columns=["borough", "zone"]
+    )
 
     df_zones.to_csv("data/clean/borough_zones.csv", index=False)
-    
+
     print("-- Zone data cleaned and saved to data/clean/borough_zones.csv")
 
     return df_zones

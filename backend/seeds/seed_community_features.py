@@ -16,7 +16,9 @@ features = [
 created, updated = 0, 0
 
 for fid, label in features:
-    obj, is_created = CommunityFeature.objects.get_or_create(id=fid, defaults={"label": label})
+    obj, is_created = CommunityFeature.objects.get_or_create(
+        id=fid, defaults={"label": label}
+    )
     if is_created:
         created += 1
     else:

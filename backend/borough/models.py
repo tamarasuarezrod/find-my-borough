@@ -1,19 +1,21 @@
-from django.db import models
-from django.contrib.auth import get_user_model
-from django.core.validators import MinValueValidator, MaxValueValidator
 from cloudinary_storage.storage import MediaCloudinaryStorage
+from django.contrib.auth import get_user_model
+from django.core.validators import MaxValueValidator, MinValueValidator
+from django.db import models
 
 User = get_user_model()
+
 
 class Borough(models.Model):
     name = models.CharField(max_length=100)
     slug = models.SlugField(unique=True)
+    description = models.TextField(blank=True, null=True)
     image = models.ImageField(
-        upload_to='boroughs/', 
+        upload_to="boroughs/",
         storage=MediaCloudinaryStorage(),
-        blank=True, 
+        blank=True,
         null=True,
-        max_length=300
+        max_length=300,
     )
 
     norm_rent = models.FloatField(null=True, blank=True)
@@ -24,6 +26,7 @@ class Borough(models.Model):
     def __str__(self):
         return self.name
 
+
 class CommunityFeature(models.Model):
     id = models.CharField(primary_key=True, max_length=50)
     label = models.CharField(max_length=100)
@@ -31,6 +34,7 @@ class CommunityFeature(models.Model):
 
     def __str__(self):
         return self.label
+
 
 class CommunityRating(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -40,4 +44,4 @@ class CommunityRating(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
-        unique_together = ('user', 'borough', 'feature')
+        unique_together = ("user", "borough", "feature")
