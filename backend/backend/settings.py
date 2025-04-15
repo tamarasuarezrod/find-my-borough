@@ -12,7 +12,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Environment-based settings
 SECRET_KEY = config("SECRET_KEY", default="insecure-key")
-DEBUG = config("DEBUG", default="True") == "True"
+DEBUG = config("DEBUG", default="False") == "True"
 ALLOWED_HOSTS = config("ALLOWED_HOSTS", default="").split(",") if not DEBUG else []
 
 # Application definition

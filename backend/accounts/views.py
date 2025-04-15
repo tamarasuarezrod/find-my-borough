@@ -31,8 +31,7 @@ class GoogleLoginAPIView(APIView):
                 clock_skew_in_seconds=10,
             )
 
-        except Exception as e:
-            print("Exception while verifying token:", str(e))
+        except Exception:
             return Response(
                 {"error": "Invalid token"}, status=status.HTTP_400_BAD_REQUEST
             )

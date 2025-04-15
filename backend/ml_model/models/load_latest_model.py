@@ -30,7 +30,7 @@ def load_latest_model():
     hidden_dim_1 = int(params.get("hidden_dim_1", 16))
     hidden_dim_2 = int(params.get("hidden_dim_2", 8))
 
-    print(f"✅ Loading model: {latest['filename']}")
+    print(f"Loading model: {latest['filename']}")
 
     model = ScoreModel(hidden_dim_1=hidden_dim_1, hidden_dim_2=hidden_dim_2)
     model.load_state_dict(torch.load(model_path))
