@@ -37,8 +37,8 @@ A single float between 0 and 1 representing how suitable a given borough is for 
 A feedforward neural network implemented in PyTorch with the following structure:
 
 - Input layer: 15 features
-- Hidden layer 1: 44 units (ReLU)
-- Hidden layer 2: 8 units (ReLU)
+- Hidden layer 1: 64 units (ReLU)
+- Hidden layer 2: 32 units (ReLU)
 - Output layer: 1 unit (Sigmoid activation)
 
 Optimized using Binary Cross Entropy Loss and the Adam optimizer. Final hyperparameters were selected via Bayesian Optimization.
@@ -47,14 +47,14 @@ Optimized using Binary Cross Entropy Loss and the Adam optimizer. Final hyperpar
 
 ## Performance
 
-- **Validation loss:** `0.3374` (Binary Cross Entropy)
+- **Validation loss:** `0.009997` (Binary Cross Entropy)
 - **Validation split:** 20% of a synthetic dataset with binary feedback scores
 - **Optimization method:** Bayesian Optimization (`skopt`)
 - **Best hyperparameters:**
-  - Learning rate: `0.004435068973219237`
-  - Hidden layer sizes: `44`, `8`
-- **Model version:** `v2`
-- **Filename:** `score_model_v2_2025-04-14.pth`
+  - Learning rate: `0.018660708832743716`
+  - Hidden layer sizes: `64`, `32`
+- **Model version:** `v3`
+- **Filename:** `score_model_v3_2025-04-16.pth`
 
 ---
 
