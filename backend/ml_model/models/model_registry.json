@@ -22,5 +22,17 @@
       "hidden_dim_2": 8.0
     },
     "notes": "Retrained with new features current_situation and stay_duration"
+  },
+  {
+    "version": "v3",
+    "filename": "score_model_v3_2025-04-16.pth",
+    "date": "2025-04-16",
+    "val_loss": 0.009997106015944723,
+    "hyperparameters": {
+      "lr": 0.018660708832743716,
+      "hidden_dim_1": 64.0,
+      "hidden_dim_2": 32.0
+    },
+    "notes": "Retrained with enhanced synthetic data"
   }
 ]
