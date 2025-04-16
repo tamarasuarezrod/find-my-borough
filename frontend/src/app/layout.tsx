@@ -1,6 +1,6 @@
+import ClientProviders from '@/context/client-providers'
 import { Sora } from 'next/font/google'
 import '../styles/globals.css'
-import ClientProviders from '@/context/client-providers'
 
 const sora = Sora({
   subsets: ['latin'],
