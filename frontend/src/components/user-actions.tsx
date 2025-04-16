@@ -1,10 +1,10 @@
 'use client'
 
-import { useSession } from 'next-auth/react'
-import { useState, useEffect, useRef } from 'react'
-import Image from 'next/image'
-import { User } from 'lucide-react'
 import { useAuth } from '@/context/auth-context'
+import { User } from 'lucide-react'
+import { useSession } from 'next-auth/react'
+import Image from 'next/image'
+import { useEffect, useRef, useState } from 'react'
 
 export default function UserActions() {
   const { data: session, status } = useSession()

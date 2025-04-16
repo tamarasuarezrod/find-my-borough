@@ -22,7 +22,9 @@ class GoogleLoginTests(TestCase):
     def test_invalid_token_returns_400(self, mock_verify):
         """Should return 400 if token verification fails"""
         mock_verify.side_effect = Exception("Invalid token")
-        response = self.client.post(self.url, {"token": "fake-token"})
+        response = self.client.post(
+            self.url, {"token": "fake-token", "provider": "google"}
+        )
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.json()["error"], "Invalid token")
 
@@ -34,7 +36,9 @@ class GoogleLoginTests(TestCase):
             "name": "Test User",
         }
 
-        response = self.client.post(self.url, {"token": "valid-token"})
+        response = self.client.post(
+            self.url, {"token": "valid-token", "provider": "google"}
+        )
         self.assertEqual(response.status_code, 200)
         self.assertIn("access", response.json())
         self.assertIn("refresh", response.json())

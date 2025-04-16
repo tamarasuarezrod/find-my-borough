@@ -8,6 +8,7 @@ import { createContext, useContext, useEffect, useRef, useState } from 'react'
 type AuthContextType = {
   isAuthenticated: boolean
   loginWithGoogle: () => void
+  loginWithFacebook: () => void
   logout: () => void
   isLoadingLogin: boolean
 }
@@ -34,29 +35,39 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   useEffect(() => {
     const sync = async () => {
+      const provider = localStorage.getItem('auth_provider') as
+        | 'google'
+        | 'facebook'
+        | null
+
       if (
         session?.id_token &&
         !localStorage.getItem('access_token') &&
-        !syncWithBackend.current
+        !syncWithBackend.current &&
+        provider
       ) {
         syncWithBackend.current = true
-        loginToBackend(session?.id_token, {
-          onSuccess: () => {
-            setIsAuthenticated(true)
+        loginToBackend(
+          { provider, token: session?.id_token },
+          {
+            onSuccess: () => {
+              setIsAuthenticated(true)
+            },
+            onError: () => {
+              showErrorToast('There was an error logging in. Please try again.')
+            },
           },
-          onError: () => {
-            showErrorToast('There was an error logging in. Please try again.')
-          },
-        })
+        )
       }
     }
 
     sync()
   }, [loginToBackend, session])
 
-  const loginWithGoogle = async () => {
+  const loginWithProvider = async (provider: 'google' | 'facebook') => {
     syncWithBackend.current = false
-    await signIn('google', { prompt: 'select_account' })
+    localStorage.setItem('auth_provider', provider)
+    await signIn(provider, { prompt: 'select_account' })
   }
 
   const logout = async () => {
@@ -70,7 +81,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     <AuthContext.Provider
       value={{
         isAuthenticated,
-        loginWithGoogle,
+        loginWithGoogle: () => loginWithProvider('google'),
+        loginWithFacebook: () => loginWithProvider('facebook'),
         logout,
         isLoadingLogin,
       }}

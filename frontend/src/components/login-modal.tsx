@@ -1,9 +1,9 @@
 'use client'
 
-import { useRouter } from 'next/navigation'
+import { useAuth } from '@/context/auth-context'
 import { X } from 'lucide-react'
 import Image from 'next/image'
-import { useAuth } from '@/context/auth-context'
+import { useRouter } from 'next/navigation'
 
 interface LoginModalProps {
   onClose: () => void
@@ -11,7 +11,7 @@ interface LoginModalProps {
 
 const LoginModal: React.FC<LoginModalProps> = ({ onClose }) => {
   const router = useRouter()
-  const { loginWithGoogle } = useAuth()
+  const { loginWithGoogle, loginWithFacebook } = useAuth()
 
   const handleClose = () => {
     onClose()
@@ -35,18 +35,37 @@ const LoginModal: React.FC<LoginModalProps> = ({ onClose }) => {
           You need to be logged in to find your match.
         </p>
 
-        <button
-          onClick={loginWithGoogle}
-          className="flex w-full items-center justify-center gap-3 rounded-full bg-white px-6 py-3 text-sm font-semibold text-zinc-800 shadow-sm transition hover:bg-gray-100"
-        >
-          <Image
-            src="/google-logo.svg"
-            alt="Google logo"
-            width={18}
-            height={18}
-          />
-          Sign in with Google
-        </button>
+        <div className="space-y-4">
+          <button
+            onClick={loginWithGoogle}
+            className="flex w-full items-center justify-center gap-3 rounded-full bg-white px-6 py-3 text-sm font-semibold text-zinc-800 shadow-sm transition hover:bg-gray-200"
+          >
+            <Image
+              src="/google-logo.svg"
+              alt="Google logo"
+              width={18}
+              height={18}
+            />
+            Sign in with Google
+          </button>
+          {process.env.NODE_ENV === 'development' && (
+            <button
+              onClick={() => {
+                console.log(window.location.href)
+                loginWithFacebook()
+              }}
+              className="flex w-full items-center justify-center gap-3 rounded-full bg-[#155ec9] px-6 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-[#1a6dd8]"
+            >
+              <Image
+                src="/facebook-logo.svg"
+                alt="Facebook logo"
+                width={20}
+                height={20}
+              />
+              Sign in with Facebook
+            </button>
+          )}
+        </div>
       </div>
     </div>
   )
