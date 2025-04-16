@@ -9,9 +9,9 @@ export default function PrivacyPolicy() {
         address to create your account.
       </p>
       <p className="mb-6 text-gray-300">
-        Some features of the app, such as "Find My Match" and borough ratings,
-        require users to be logged in. This allows us to associate your inputs
-        with your account to improve the recommendation experience.
+        Some features of the app, such as &quot;Find My Match&quot; and borough
+        ratings, require users to be logged in. This allows us to associate your
+        inputs with your account to improve the recommendation experience.
       </p>
       <p className="text-gray-300">
         If you have any questions or would like your account deleted, please
